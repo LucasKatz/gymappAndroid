@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.appcompat.widget.AppCompatButton
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="60dp"
+    android:background="@drawable/boton_redondeado"
+    android:drawablePadding="10dp"
+    android:paddingHorizontal="20dp"
+    android:textAllCaps="true"
+    android:textSize="13sp" />

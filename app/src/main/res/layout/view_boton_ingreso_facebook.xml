@@ -1,0 +1,16 @@
+<androidx.appcompat.widget.AppCompatButton
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/btnInternalSocial"
+    android:layout_width="match_parent"
+    android:layout_height="20dp"
+    android:background="@drawable/boton_redondeado"
+    android:drawableStart="@drawable/facebook_redimension"
+    android:drawablePadding="10dp"
+    android:paddingHorizontal="20dp"
+    android:text="INGRESAR CON FACEBOOK"
+    android:paddingVertical="15dp"
+    android:textAllCaps="true"
+    android:backgroundTint="#949CFF"
+    android:textColor="#FFFFFF"
+    android:textSize="14sp"
+    android:textStyle="bold"/>

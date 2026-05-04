@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:gravity="center_horizontal"
+    android:padding="24dp"
+    android:background="#FFFFFF">
+
+    <ImageButton
+        android:id="@+id/btnBack"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:layout_gravity="start"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        android:src="@drawable/ic_arrow_back" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:text="Crea tu cuenta"
+        android:textColor="#3E4152"
+        android:textSize="28sp"
+        android:textStyle="bold" />
+
+    <include
+        android:id="@+id/btnFacebook"
+        layout="@layout/view_boton_ingreso_facebook"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="30dp"
+        />
+
+    <include
+        android:id="@+id/btnGoogle"
+        layout="@layout/view_boton_ingreso_google"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:layout_marginBottom="30dp"/>
+
+    <include
+        android:id="@+id/etEmail"
+        layout="@drawable/input_espacio"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+    <include
+        android:id="@+id/etEmail"
+        layout="@drawable/input_espacio"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"/>
+
+    <include
+        android:id="@+id/etPassword"
+        layout="@drawable/input_espacio_p"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp" />
+
+    <CheckBox
+        android:id="@+id/checkPoliticas"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginVertical="20dp"
+        android:text="He leído las condiciones y políticas de privacidad"
+        android:textColor="#9E9E9E"
+        android:textSize="12sp"
+        android:textStyle="bold"
+        android:buttonTint="#949CFF" />
+
+
+
+    <include
+        android:id="@+id/btnLogin"
+        layout="@layout/view_boton_ingresar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="20dp"
+        android:layout_marginVertical="30dp"/>
+
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginVertical="30dp"
+        android:text="¿Ya tienes una cuenta? INGRESA"
+        android:textColor="#9E9E9E"
+        android:textSize="12sp"
+        android:textStyle="bold" />
+
+</LinearLayout>

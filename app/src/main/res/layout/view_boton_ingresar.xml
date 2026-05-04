@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Button xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/btnIngreso"
+    android:background="@drawable/boton_redondeado"
+    android:layout_width="match_parent"
+    android:layout_height="60dp"
+    android:backgroundTint="#949CFF"
+    android:text="INGRESAR"
+    android:textColor="#FFFFFF"
+    app:cornerRadius="30dp" />
