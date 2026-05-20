@@ -7,31 +7,28 @@ import android.widget.EditText
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 
+
 class RegistroSocioActivity : AppCompatActivity() {
 
-    // 1. Declaramos las variables para los componentes del XML
-    private lateinit var etDni: EditText
-    private lateinit var etNombre: EditText
-    private lateinit var etApellido: EditText
+    // 1. Inicializamos el ViewModel compartido.
+    // Esto es lo que permite que el Fragment 1 guarde datos y el 3 los lea.
+    val socioViewModel: SocioViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.fragment_registro_socio_1)
 
-        // 2. Inicializamos los componentes buscando sus IDs (Asegúrate que coincidan con tu XML)
-        etDni = findViewById(R.id.etDniRegistro) // Cambia el ID si en tu XML es distinto
-        etNombre = findViewById(R.id.etNombreRegistro)
-        etApellido = findViewById(R.id.etApellidoRegistro)
+        // 2. IMPORTANTE: El layout de la actividad debe ser el que tiene el contenedor (FrameLayout)
+        // No pongas aquí el layout de un fragmento.
+        setContentView(R.layout.activity_registro_socio)
 
-        val btnGuardar = findViewById<Button>(R.id.btnGuardarSocio)
-        val btnModificar = findViewById<Button>(R.id.btnModificarSocio)
-        val btnEliminar = findViewById<Button>(R.id.btnEliminarSocio)
-
-        // 3. Configuramos los clics
-        btnGuardar.setOnClickListener { agregarSocio() }
-        btnModificar.setOnClickListener { modificarSocio() }
-        btnEliminar.setOnClickListener { eliminarSocio() }
+        // 3. Al iniciar, cargamos el primer fragmento (Sección 1)
+        if (savedInstanceState == null) {
+            supportFragmentManager.beginTransaction()
+                .replace(R.id.fragment_container_registros, RegistroSocioFragment1())
+                .commit()
+        }
     }
+}
 
     // --- MÉTODO PARA AGREGAR ---
     private fun agregarSocio() {

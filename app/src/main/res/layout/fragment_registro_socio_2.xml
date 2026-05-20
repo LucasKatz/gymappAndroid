@@ -22,7 +22,7 @@
         android:textStyle="bold" />
 
     <TextView style="@style/LabelStyle" android:text="Categoria" />
-    <EditText style="@style/InputStyle" android:inputType="text" />
+    <EditText style="@style/InputStyle" android:id="@+id/etCategoria" android:inputType="text" />
 
     <TextView style="@style/LabelStyle" android:text="Actividades" />
     <EditText style="@style/InputStyle" android:inputType="text" android:layout_marginBottom="15dp"/>
@@ -30,7 +30,7 @@
     <EditText style="@style/InputStyle" android:inputType="text" />
 
     <TextView style="@style/LabelStyle" android:text="Vencimiento de Cuota" />
-    <EditText style="@style/InputStyle" android:inputType="date" />
+    <EditText style="@style/InputStyle" android:id="@+id/etVencimiento" android:inputType="date"   />
 
 </LinearLayout>
 </ScrollView>

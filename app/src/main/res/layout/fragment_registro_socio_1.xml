@@ -19,16 +19,16 @@
             android:textStyle="bold" />
 
         <TextView style="@style/LabelStyle" android:text="Nombre y Apellido" />
-        <EditText style="@style/InputStyle" android:inputType="textPersonName" />
+        <EditText style="@style/InputStyle" android:id="@+id/etNombreRegistro" android:inputType="textPersonName" />
 
         <TextView style="@style/LabelStyle" android:text="DNI" />
-        <EditText style="@style/InputStyle" android:inputType="number" />
+        <EditText style="@style/InputStyle" android:id="@+id/etDniRegistro" android:inputType="number" />
 
         <TextView style="@style/LabelStyle" android:text="Fecha de Nacimiento" />
-        <EditText style="@style/InputStyle" android:inputType="date" />
+        <EditText style="@style/InputStyle" android:id="@+id/etFechaNacRegistro" android:inputType="date" />
 
         <TextView style="@style/LabelStyle" android:text="Teléfono de contacto" />
-        <EditText style="@style/InputStyle" android:inputType="phone" />
+        <EditText style="@style/InputStyle" android:id="@+id/etTelefonoRegistro" android:inputType="phone" />
 
         <Button
             android:id="@+id/btnSiguiente1"
