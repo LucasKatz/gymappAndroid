@@ -22,7 +22,7 @@
             android:textStyle="bold" />
 
         <TextView style="@style/LabelStyle" android:text="Monto de Inscripción" />
-        <EditText style="@style/InputStyle" android:inputType="number" />
+        <EditText style="@style/InputStyle" android:id="@+id/etMontoInscripcion" android:inputType="number" />
 
         <TextView style="@style/LabelStyle" android:text="Metodo de Pago" />
         <EditText style="@style/InputStyle" android:inputType="text" />
