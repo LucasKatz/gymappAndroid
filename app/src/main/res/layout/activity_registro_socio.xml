@@ -34,18 +34,7 @@
 
 
 
-        <androidx.appcompat.widget.AppCompatButton
-            android:id="@+id/btnEmitir"
-            android:layout_width="200dp"
-            android:layout_height="60dp"
-            android:layout_gravity="center_horizontal"
-            android:layout_marginTop="30dp"
-            android:background="@drawable/boton_emitir_pase"
-            android:text="Siguiente"
-            android:textAllCaps="false"
-            android:textColor="#FFFFFF"
-            android:textSize="18sp"
-            android:textStyle="bold" />
+
 
     </LinearLayout>
 </ScrollView>

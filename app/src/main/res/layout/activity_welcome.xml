@@ -61,7 +61,7 @@
 
 
     <include
-        android:id="@+id/btnCreateAccount"
+        android:id="@+id/btnPanelCentral"
         layout="@layout/view_boton_ingresar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

@@ -11,15 +11,31 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.ClubDeportivoDAM">
+
         <activity
             android:name=".MainActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <activity android:name=".LoginActivity" />
+        <activity android:name=".CreateAccountActivity" />
+        <activity android:name=".WelcomeActivity" />
+
+        <activity android:name=".PanelGestionActivity" />
+        <activity android:name=".SociosActivity" />
+        <activity android:name=".VencimientosActivity" />
+        <activity android:name=".ActividadesActivity" />
+
+        <activity android:name=".PaseDiarioActivity" />
+        <activity android:name=".PaseActividadActivity" />
+        <activity android:name=".CarnetSociosActivity" />
+
+        <activity android:name=".RegistroSocioActivity" />
+
     </application>
 
 </manifest>
