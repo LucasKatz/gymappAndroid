@@ -22,13 +22,15 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
             <TextView
+                android:id="@+id/txtNombreSocio"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Pérez, Juan"
+                android:text="Nombre del Socio"
                 android:textColor="#000000"
                 android:textSize="18sp"
                 android:textStyle="bold" />
             <TextView
+                android:id="@+id/txtEstadoSocio"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentEnd="true"
@@ -41,9 +43,10 @@
         </RelativeLayout>
 
         <TextView
+            android:id="@+id/txtDniSocio"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="SOC-001"
+            android:text="DNI"
             android:textSize="12sp" />
 
         <LinearLayout
@@ -56,10 +59,11 @@
                 android:layout_height="16dp"
                 android:src="@drawable/ic_phone" />
             <TextView
+                android:id="@+id/txtTelefonoSocio"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
-                android:text="1145678901"
+                android:text="Teléfono"
                 android:textSize="12sp" />
         </LinearLayout>
 
@@ -76,15 +80,21 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:orientation="vertical">
-                <TextView android:text="Estado Cuota" android:textSize="10sp" />
-                <TextView android:text="Vigente" android:textColor="#4CAF50" android:textStyle="bold" android:textSize="12sp" />
+                <TextView android:text="Categoría" android:textSize="10sp" />
+                <TextView
+                    android:id="@+id/txtCategoriaSocio"
+                    android:text="General"
+                    android:textColor="#4CAF50"
+                    android:textStyle="bold"
+                    android:textSize="12sp" />
             </LinearLayout>
             <TextView
+                android:id="@+id/txtVencimientoSocio"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentEnd="true"
                 android:gravity="end"
-                android:text="Vencimiento\n14/4"
+                android:text="Vencimiento"
                 android:textSize="10sp" />
         </RelativeLayout>
     </LinearLayout>

@@ -6,14 +6,26 @@ import android.database.sqlite.SQLiteOpenHelper
 
 class AdminSQLiteOpenHelper(
     context: Context?
-) : SQLiteOpenHelper(context, "administracion", null, 1) {
+) : SQLiteOpenHelper(context, "administracion", null, 2) { // Subimos la versión a 2
 
     override fun onCreate(db: SQLiteDatabase) {
-        // Esta sentencia crea la tabla 'socios' la primera vez que se usa la app
-        db.execSQL("create table socios(dni int primary key, nombre text, apellido text, estado text)")
+        // Creamos la tabla con TODAS las columnas necesarias
+        db.execSQL("""
+            CREATE TABLE socios (
+                dni INTEGER PRIMARY KEY, 
+                nombre TEXT, 
+                telefono TEXT, 
+                categoria TEXT, 
+                vencimiento TEXT, 
+                monto REAL, 
+                estado TEXT
+            )
+        """.trimIndent())
     }
 
     override fun onUpgrade(db: SQLiteDatabase, oldVersion: Int, newVersion: Int) {
-        // Se usa para cambios estructurales en el futuro
+        // Si la versión cambia, borramos la tabla vieja y creamos la nueva
+        db.execSQL("DROP TABLE IF EXISTS socios")
+        onCreate(db)
     }
 }
