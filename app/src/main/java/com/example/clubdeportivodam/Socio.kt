@@ -6,5 +6,6 @@ data class Socio(
     val nombre: String,
     val categoria: String,
     val vencimiento: String,
-    val telefono: String
+    val telefono: String,
+    val estado: String
 )

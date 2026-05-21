@@ -53,28 +53,40 @@ class RegistroSocioFragment3 : Fragment() {
 
         val registro = ContentValues()
 
-        // RECOLECTAMOS TODO DEL VIEWMODEL
-        // Importante: Si tu tabla espera un INT en el DNI, usamos toIntOrNull()
-        registro.put("dni", viewModel.dni.toIntOrNull() ?: 0)
+        // 1. Limpieza de DNI (Quitamos puntos y espacios)
+        val dniLimpio = viewModel.dni.replace(".", "").replace(" ", "").trim()
+        val dniFinal = dniLimpio.toIntOrNull()
+
+        if (dniFinal == null) {
+            Toast.makeText(requireContext(), "DNI inválido. Solo números por favor.", Toast.LENGTH_SHORT).show()
+            return
+        }
+
+        // 2. Mapeo EXACTO con las columnas de tu AdminSQLite
+        registro.put("dni", dniFinal)
         registro.put("nombre", viewModel.nombre)
-        registro.put("apellido", viewModel.telefono) // Opcional: podrías guardar el tel aquí si no tienes esa columna
+        registro.put("telefono", viewModel.telefono) // Antes decía "apellido", ahora coincide con tu tabla
         registro.put("categoria", viewModel.categoria)
         registro.put("vencimiento", viewModel.vencimiento)
         registro.put("monto", viewModel.monto.toDoubleOrNull() ?: 0.0)
         registro.put("estado", "Activo")
 
-        // Inserción en la tabla 'socios'
-        val resultado = db.insert("socios", null, registro)
-        db.close()
+        try {
+            // 3. Intento de inserción
+            val resultado = db.insert("socios", null, registro)
 
-        if (resultado != -1L) {
-            Toast.makeText(requireContext(), "Socio ${viewModel.nombre} registrado con éxito", Toast.LENGTH_LONG).show()
-
-            // VOLVEMOS AL LISTADO
-            // finish() cierra la RegistroSocioActivity y te devuelve a SociosActivity
-            requireActivity().finish()
-        } else {
-            Toast.makeText(requireContext(), "Error: El DNI ya existe o hay un problema con la tabla", Toast.LENGTH_SHORT).show()
+            if (resultado != -1L) {
+                Toast.makeText(requireContext(), "Socio registrado con éxito", Toast.LENGTH_LONG).show()
+                requireActivity().finish() // Cerramos y volvemos al listado
+            } else {
+                // Si el resultado es -1, es porque el DNI ya está en la tabla
+                Toast.makeText(requireContext(), "Error: El DNI $dniFinal ya está registrado", Toast.LENGTH_SHORT).show()
+            }
+        } catch (e: Exception) {
+            // Esto te dirá si falta alguna columna o si el SQL está mal
+            Toast.makeText(requireContext(), "Error crítico: ${e.message}", Toast.LENGTH_LONG).show()
+        } finally {
+            db.close()
         }
     }
 }

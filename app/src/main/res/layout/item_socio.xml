@@ -76,18 +76,28 @@
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
+
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:orientation="vertical">
-                <TextView android:text="Categoría" android:textSize="10sp" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Categoría"
+                    android:textSize="10sp" />
+
                 <TextView
                     android:id="@+id/txtCategoriaSocio"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
                     android:text="General"
                     android:textColor="#4CAF50"
                     android:textStyle="bold"
                     android:textSize="12sp" />
             </LinearLayout>
+
             <TextView
                 android:id="@+id/txtVencimientoSocio"
                 android:layout_width="wrap_content"

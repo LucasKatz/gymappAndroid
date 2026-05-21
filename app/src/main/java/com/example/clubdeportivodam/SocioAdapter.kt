@@ -16,6 +16,7 @@ class SocioAdapter(private val listaSocios: List<Socio>) :
         val txtTelefono: TextView = view.findViewById(R.id.txtTelefonoSocio)
         val txtCategoria: TextView = view.findViewById(R.id.txtCategoriaSocio)
         val txtVencimiento: TextView = view.findViewById(R.id.txtVencimientoSocio)
+        val txtEstado: TextView = view.findViewById(R.id.txtEstadoSocio)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): SocioViewHolder {
@@ -27,13 +28,15 @@ class SocioAdapter(private val listaSocios: List<Socio>) :
     override fun onBindViewHolder(holder: SocioViewHolder, position: Int) {
         val socio = listaSocios[position]
 
-        // 2. Aquí "escribimos" los datos reales sobre tu diseño estético
-        holder.txtNombre.text = socio.nombre
+        // Usamos el operador de seguridad para evitar que un nulo cierre la app
+        holder.txtNombre.text = socio.nombre ?: "Sin nombre"
         holder.txtDni.text = "DNI: ${socio.dni}"
-        holder.txtCategoria.text = socio.categoria
-        holder.txtVencimiento.text = "Vencimiento\n${socio.vencimiento}"
+        holder.txtCategoria.text = socio.categoria ?: "General"
+        holder.txtVencimiento.text = "Vencimiento: ${socio.vencimiento}"
+        holder.txtTelefono.text = socio.telefono ?: "-"
 
-        holder.txtTelefono.text = socio.telefono
+        // IMPORTANTE: Asegúrate de que txtEstado esté declarado en el ViewHolder
+        holder.txtEstado.text = socio.estado ?: "Activo"
     }
 
     override fun getItemCount(): Int = listaSocios.size

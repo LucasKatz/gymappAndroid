@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import android.widget.Toast
 
 class ListadoSociosFragment : Fragment() {
 
@@ -33,31 +34,45 @@ class ListadoSociosFragment : Fragment() {
     }
 
     private fun cargarYMostrarSocios() {
-        val admin = AdminSQLiteOpenHelper(requireContext())
-        val db = admin.readableDatabase
-        val lista = mutableListOf<Socio>()
+        try {
+            val admin = AdminSQLiteOpenHelper(requireContext())
+            val db = admin.readableDatabase
+            val lista = mutableListOf<Socio>()
 
-        // 1. Ampliamos la consulta para traer TODAS las columnas necesarias
-        // El orden aquí es importante para el paso 2
-        val cursor = db.rawQuery("SELECT dni, nombre, categoria, vencimiento, telefono FROM socios", null)
+            // Traemos todo para no errar nombres
+            val cursor = db.rawQuery("SELECT * FROM socios", null)
 
-        if (cursor.moveToFirst()) {
-            do {
-                // 2. Creamos el objeto Socio pasando los 5 parámetros
-                val socio = Socio(
-                    dni = cursor.getString(0),
-                    nombre = cursor.getString(1),
-                    categoria = cursor.getString(2),
-                    vencimiento = cursor.getString(3),
-                    telefono = cursor.getString(4)
-                )
-                lista.add(socio)
-            } while (cursor.moveToNext())
+            if (cursor.moveToFirst()) {
+                // Obtenemos los índices de forma segura
+                val iDni = cursor.getColumnIndex("dni")
+                val iNom = cursor.getColumnIndex("nombre")
+                val iCat = cursor.getColumnIndex("categoria")
+                val iVen = cursor.getColumnIndex("vencimiento")
+                val iTel = cursor.getColumnIndex("telefono")
+                val iEst = cursor.getColumnIndex("estado")
+
+                do {
+                    // Verificamos que la columna exista (-1 significa que no existe)
+                    val socio = Socio(
+                        dni = if (iDni != -1) cursor.getInt(iDni).toString() else "0",
+                        nombre = if (iNom != -1) cursor.getString(iNom) ?: "N/A" else "N/A",
+                        categoria = if (iCat != -1) cursor.getString(iCat) ?: "S/C" else "S/C",
+                        vencimiento = if (iVen != -1) cursor.getString(iVen) ?: "S/V" else "S/V",
+                        telefono = if (iTel != -1) cursor.getString(iTel) ?: "-" else "-",
+                        estado = if (iEst != -1) cursor.getString(iEst) ?: "Activo" else "Activo"
+                    )
+                    lista.add(socio)
+                } while (cursor.moveToNext())
+            }
+            cursor.close()
+            db.close()
+
+            rvSocios.adapter = SocioAdapter(lista)
+
+        } catch (e: Exception) {
+            // Esto te mostrará el error exacto en un mensaje flotante
+            android.util.Log.e("SQL_ERROR", "Error: ${e.message}")
+            Toast.makeText(requireContext(), "Error al listar: ${e.message}", Toast.LENGTH_LONG).show()
         }
-        cursor.close()
-        db.close()
-
-        // 3. Enviamos la lista completa al Adapter
-        rvSocios.adapter = SocioAdapter(lista)
     }
 }

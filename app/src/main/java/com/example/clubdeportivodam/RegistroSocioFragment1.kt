@@ -33,7 +33,7 @@ class RegistroSocioFragment1 : Fragment() {
         // 2. Configuración del botón Siguiente
         btnSiguiente.setOnClickListener {
             val nombre = etNombre.text.toString()
-            val dni = etDni.text.toString()
+            val dni = etDni.text.toString().replace(".", "").trim()
             val fecha = etFechaNac.text.toString()
             val tel = etTelefono.text.toString()
 
