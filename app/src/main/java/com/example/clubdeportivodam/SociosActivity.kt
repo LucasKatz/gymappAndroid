@@ -11,7 +11,12 @@ class SociosActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_socios)
 
-        // IMPORTANTE: Verifica que R.id.fragment_socios_container sea igual al del XML
+
+        val btnVolver = findViewById<android.widget.ImageButton>(R.id.btnBackToPanel)
+        btnVolver.setOnClickListener {
+            finish()
+        }
+
         if (savedInstanceState == null) {
             try {
                 supportFragmentManager.beginTransaction()

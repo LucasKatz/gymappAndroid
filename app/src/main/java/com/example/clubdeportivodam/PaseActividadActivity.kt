@@ -11,5 +11,11 @@ class PaseActividadActivity: AppCompatActivity() {
 
 
         setContentView(R.layout.activity_pase_actividad)
+
+        val btnVolver = findViewById<android.widget.ImageButton>(R.id.btnBackToPanel)
+        btnVolver.setOnClickListener {
+            finish()
     }
+    }
+
 }

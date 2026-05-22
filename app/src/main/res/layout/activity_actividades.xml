@@ -24,6 +24,8 @@
                 android:textSize="26sp"
                 android:textStyle="bold" />
 
+
+
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -38,6 +40,13 @@
             android:layout_alignParentEnd="true"
             android:src="@drawable/logo_gym" />
     </RelativeLayout>
+
+    <ImageButton
+        android:id="@+id/btnBackToPanel"
+        android:layout_width="48dp"
+        android:layout_height="12dp"
+        android:src="@drawable/ic_arrow_back"
+        android:background="?attr/selectableItemBackgroundBorderless" />
 
     <LinearLayout
         android:layout_width="match_parent"

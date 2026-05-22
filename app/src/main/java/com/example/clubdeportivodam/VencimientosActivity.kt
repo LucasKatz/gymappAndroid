@@ -9,7 +9,11 @@ class VencimientosActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-
         setContentView(R.layout.activity_vencimientos)
+
+        val btnVolver = findViewById<android.widget.ImageButton>(R.id.btnBackToPanel)
+        btnVolver.setOnClickListener {
+            finish()
+        }
     }
 }

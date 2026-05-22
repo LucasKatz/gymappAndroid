@@ -18,12 +18,25 @@
             android:textSize="24sp"
             android:textStyle="bold"
             android:textColor="#3E4152"/>
+
+
+
+
         <ImageView
             android:layout_width="60dp"
             android:layout_height="60dp"
             android:layout_alignParentEnd="true"
             android:src="@drawable/logo_gym" />
+
+
     </RelativeLayout>
+
+    <ImageButton
+        android:id="@+id/btnBackToPanel"
+        android:layout_width="48dp"
+        android:layout_height="12dp"
+        android:src="@drawable/ic_arrow_back"
+        android:background="?attr/selectableItemBackgroundBorderless" />
 
     <LinearLayout
         android:layout_width="match_parent"

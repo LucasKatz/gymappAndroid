@@ -25,11 +25,22 @@
                 android:textSize="24sp"
                 android:textStyle="bold" />
 
+
             <ImageView
                 android:layout_width="80dp"
                 android:layout_height="80dp"
                 android:layout_alignParentEnd="true"
-                android:src="@drawable/logo_gym" /> </RelativeLayout>
+                android:src="@drawable/logo_gym" />
+
+        </RelativeLayout>
+
+        <ImageButton
+            android:id="@+id/btnBackToPanel"
+            android:layout_width="48dp"
+            android:layout_height="12dp"
+            android:src="@drawable/ic_arrow_back"
+            android:background="?attr/selectableItemBackgroundBorderless" />
+
 
         <TextView style="@style/LabelStyle" android:text="Nombre y Apellido" />
         <EditText style="@style/InputStyle" android:inputType="textPersonName" />
