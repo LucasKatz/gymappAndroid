@@ -6,13 +6,12 @@ import android.database.sqlite.SQLiteOpenHelper
 
 class AdminSQLiteOpenHelper(
     context: Context?
-) : SQLiteOpenHelper(context, "administracion", null, 2) { // Subimos la versión a 2
+) : SQLiteOpenHelper(context, "administracion", null, 2) {
 
     override fun onCreate(db: SQLiteDatabase) {
-
         db.execSQL("""
             CREATE TABLE socios (
-                dni INTEGER PRIMARY KEY, 
+                dni TEXT PRIMARY KEY, 
                 nombre TEXT, 
                 email TEXT,
                 telefono TEXT, 
@@ -22,11 +21,23 @@ class AdminSQLiteOpenHelper(
                 estado TEXT
             )
         """.trimIndent())
+
+        db.execSQL("""
+            CREATE TABLE actividades (
+                id INTEGER PRIMARY KEY AUTOINCREMENT, 
+                nombre TEXT, 
+                profesor TEXT, 
+                horario1 TEXT, 
+                horario2 TEXT, 
+                cupos INTEGER
+            )
+        """.trimIndent())
     }
 
     override fun onUpgrade(db: SQLiteDatabase, oldVersion: Int, newVersion: Int) {
-        // Si la versión cambia, borramos la tabla vieja y creamos la nueva
+        // Borramos AMBAS tablas si actualizamos la versión
         db.execSQL("DROP TABLE IF EXISTS socios")
+        db.execSQL("DROP TABLE IF EXISTS actividades")
         onCreate(db)
     }
 }

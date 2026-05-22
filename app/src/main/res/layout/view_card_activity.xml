@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
-
 <com.google.android.material.card.MaterialCardView
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -44,17 +43,21 @@
                 <ImageView
                     android:layout_width="16dp"
                     android:layout_height="16dp"
-                    android:src="@drawable/baseline_people_24" /> <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="4dp"
-                android:text="30"
-                android:textSize="12sp"
-                android:textStyle="bold" />
+                    android:src="@drawable/baseline_people_24" />
+
+                <TextView
+                    android:id="@+id/tvCuposActividad"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="4dp"
+                    android:text="30"
+                    android:textSize="12sp"
+                    android:textStyle="bold" />
             </LinearLayout>
         </RelativeLayout>
 
         <TextView
+            android:id="@+id/tvProfesorActividad"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="4dp"
@@ -72,9 +75,10 @@
             <ImageView
                 android:layout_width="18dp"
                 android:layout_height="18dp"
-                android:src="@drawable/ic_calendar" />
+                android:src="@drawable/outline_calendar_month_24" />
 
             <TextView
+                android:id="@+id/tvHorario1Actividad"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
@@ -92,9 +96,10 @@
             <ImageView
                 android:layout_width="18dp"
                 android:layout_height="18dp"
-                android:src="@drawable/ic_calendar" />
+                android:src="@drawable/outline_calendar_month_24" />
 
             <TextView
+                android:id="@+id/tvHorario2Actividad"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
