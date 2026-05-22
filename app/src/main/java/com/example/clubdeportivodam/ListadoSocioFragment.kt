@@ -46,6 +46,7 @@ class ListadoSociosFragment : Fragment() {
                 // Obtenemos los índices de forma segura
                 val iDni = cursor.getColumnIndex("dni")
                 val iNom = cursor.getColumnIndex("nombre")
+                val iEmail = cursor.getColumnIndex("email")
                 val iCat = cursor.getColumnIndex("categoria")
                 val iVen = cursor.getColumnIndex("vencimiento")
                 val iTel = cursor.getColumnIndex("telefono")
@@ -56,6 +57,7 @@ class ListadoSociosFragment : Fragment() {
                     val socio = Socio(
                         dni = if (iDni != -1) cursor.getInt(iDni).toString() else "0",
                         nombre = if (iNom != -1) cursor.getString(iNom) ?: "N/A" else "N/A",
+                        Email = if (iEmail != -1) cursor.getString(iEmail) ?: "N/A" else "N/A",
                         categoria = if (iCat != -1) cursor.getString(iCat) ?: "S/C" else "S/C",
                         vencimiento = if (iVen != -1) cursor.getString(iVen) ?: "S/V" else "S/V",
                         telefono = if (iTel != -1) cursor.getString(iTel) ?: "-" else "-",

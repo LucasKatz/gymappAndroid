@@ -23,39 +23,66 @@ class RegistroSocioFragment1 : Fragment() {
         // Conectamos con el ViewModel compartido de la Activity
         viewModel = ViewModelProvider(requireActivity()).get(SocioViewModel::class.java)
 
-        // 1. Referencias a TODOS los componentes de tu XML sección 1
+        // 1. Referencias a los componentes
         val etNombre = view.findViewById<EditText>(R.id.etNombreRegistro)
         val etDni = view.findViewById<EditText>(R.id.etDniRegistro)
-        val etFechaNac = view.findViewById<EditText>(R.id.etFechaNacRegistro)
+        val etEmail = view.findViewById<EditText>(R.id.etEmailSocio)
         val etTelefono = view.findViewById<EditText>(R.id.etTelefonoRegistro)
         val btnSiguiente = view.findViewById<Button>(R.id.btnSiguiente1)
 
         // 2. Configuración del botón Siguiente
         btnSiguiente.setOnClickListener {
-            val nombre = etNombre.text.toString()
+            // Obtenemos textos y limpiamos espacios en blanco
+            val nombre = etNombre.text.toString().trim()
             val dni = etDni.text.toString().replace(".", "").trim()
-            val fecha = etFechaNac.text.toString()
-            val tel = etTelefono.text.toString()
+            val email = etEmail.text.toString().trim()
+            val tel = etTelefono.text.toString().trim()
 
-            // Validación: Al menos Nombre y DNI deben estar presentes
-            if (nombre.isNotEmpty() && dni.isNotEmpty()) {
+            var esValido = true
 
-                // 3. GUARDAMOS TODO EN EL VIEWMODEL (La caja fuerte)
+            // --- VALIDACIONES ---
+
+            if (nombre.isEmpty()) {
+                etNombre.error = "El nombre es obligatorio"
+                esValido = false
+            }
+
+            if (dni.isEmpty()) {
+                etDni.error = "El DNI es obligatorio"
+                esValido = false
+            } else if (dni.length < 7) {
+                etDni.error = "DNI demasiado corto"
+                esValido = false
+            }
+
+            if (email.isEmpty()) {
+                etEmail.error = "El email es obligatorio"
+                esValido = false
+            } else if (!android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
+                etEmail.error = "Formato de email no válido"
+                esValido = false
+            }
+
+            if (tel.isEmpty()) {
+                etTelefono.error = "El teléfono es obligatorio"
+                esValido = false
+            }
+
+            // 3. SI TODO ES VÁLIDO, PROCEDEMOS
+            if (esValido) {
+                // GUARDAMOS EN EL VIEWMODEL
                 viewModel.nombre = nombre
                 viewModel.dni = dni
-                viewModel.fechaNac = fecha
+                viewModel.Email = email
                 viewModel.telefono = tel
 
-                // 4. Navegamos al Fragmento 2
+                // NAVEGAMOS AL FRAGMENTO 2
                 parentFragmentManager.beginTransaction()
                     .replace(R.id.fragment_container_registros, RegistroSocioFragment2())
                     .addToBackStack(null)
                     .commit()
-
             } else {
-                Toast.makeText(requireContext(), "Por favor, completa Nombre y DNI", Toast.LENGTH_SHORT).show()
-                if (nombre.isEmpty()) etNombre.error = "Requerido"
-                if (dni.isEmpty()) etDni.error = "Requerido"
+                Toast.makeText(requireContext(), "Por favor, completa los campos marcados", Toast.LENGTH_SHORT).show()
             }
         }
 

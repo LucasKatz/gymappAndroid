@@ -9,11 +9,12 @@ class AdminSQLiteOpenHelper(
 ) : SQLiteOpenHelper(context, "administracion", null, 2) { // Subimos la versión a 2
 
     override fun onCreate(db: SQLiteDatabase) {
-        // Creamos la tabla con TODAS las columnas necesarias
+
         db.execSQL("""
             CREATE TABLE socios (
                 dni INTEGER PRIMARY KEY, 
                 nombre TEXT, 
+                email TEXT,
                 telefono TEXT, 
                 categoria TEXT, 
                 vencimiento TEXT, 

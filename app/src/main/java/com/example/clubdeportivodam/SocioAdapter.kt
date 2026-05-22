@@ -13,6 +13,9 @@ class SocioAdapter(private val listaSocios: List<Socio>) :
     class SocioViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         val txtNombre: TextView = view.findViewById(R.id.txtNombreSocio)
         val txtDni: TextView = view.findViewById(R.id.txtDniSocio)
+
+        val txtEmail: TextView = view.findViewById(R.id.txtEmailSocio)
+
         val txtTelefono: TextView = view.findViewById(R.id.txtTelefonoSocio)
         val txtCategoria: TextView = view.findViewById(R.id.txtCategoriaSocio)
         val txtVencimiento: TextView = view.findViewById(R.id.txtVencimientoSocio)
@@ -31,6 +34,7 @@ class SocioAdapter(private val listaSocios: List<Socio>) :
         // Usamos el operador de seguridad para evitar que un nulo cierre la app
         holder.txtNombre.text = socio.nombre ?: "Sin nombre"
         holder.txtDni.text = "DNI: ${socio.dni}"
+        holder.txtEmail.text = socio.Email ?: "Sin email"
         holder.txtCategoria.text = socio.categoria ?: "General"
         holder.txtVencimiento.text = "Vencimiento: ${socio.vencimiento}"
         holder.txtTelefono.text = socio.telefono ?: "-"

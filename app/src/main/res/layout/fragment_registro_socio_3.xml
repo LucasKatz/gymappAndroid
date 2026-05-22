@@ -27,15 +27,7 @@
         <TextView style="@style/LabelStyle" android:text="Metodo de Pago" />
         <EditText style="@style/InputStyle" android:inputType="text" />
 
-        <TextView style="@style/LabelStyle" android:text="Foto" />
-        <ImageButton
-            android:id="@+id/btnFotoCarnet"
-            android:layout_width="120dp"  android:layout_height="120dp"
-            android:layout_marginTop="10dp"
-            android:background="@drawable/marco_foto"
-            android:contentDescription="Subir foto"
-            android:scaleType="centerInside"
-            />
+
 
         <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/btnEmitir"

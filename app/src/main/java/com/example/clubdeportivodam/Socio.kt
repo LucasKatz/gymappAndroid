@@ -4,6 +4,7 @@ package com.example.clubdeportivodam
 data class Socio(
     val dni: String,
     val nombre: String,
+    val Email: String,
     val categoria: String,
     val vencimiento: String,
     val telefono: String,
