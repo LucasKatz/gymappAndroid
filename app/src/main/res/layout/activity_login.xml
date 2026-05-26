@@ -43,14 +43,14 @@
         android:textStyle="bold" />
 
     <include
-        android:id="@+id/etEmail"
-        layout="@drawable/input_espacio"
+        android:id="@+id/containerEmail"
+        layout="@layout/input_espacio"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
 
     <include
-        android:id="@+id/etPassword"
-        layout="@drawable/input_espacio_p"
+        android:id="@+id/containerPassword"
+        layout="@layout/input_espacio_p"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp" />

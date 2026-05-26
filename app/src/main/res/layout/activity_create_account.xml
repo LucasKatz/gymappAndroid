@@ -35,20 +35,20 @@
 
     <include
         android:id="@+id/etEmail1"
-        layout="@drawable/input_espacio"
+        layout="@layout/input_espacio"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
 
     <include
         android:id="@+id/etEmail2"
-        layout="@drawable/input_espacio"
+        layout="@layout/input_espacio"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"/>
 
     <include
         android:id="@+id/etPassword"
-        layout="@drawable/input_espacio_p"
+        layout="@layout/input_espacio_p"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp" />
