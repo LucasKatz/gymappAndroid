@@ -25,13 +25,6 @@
         android:textSize="28sp"
         android:textStyle="bold" />
 
-    <include
-        android:id="@+id/btnFacebook"
-        layout="@layout/view_boton_ingreso_facebook"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="30dp"
-        />
 
     <include
         android:id="@+id/btnGoogle"

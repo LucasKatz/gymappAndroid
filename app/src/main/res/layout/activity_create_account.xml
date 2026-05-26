@@ -26,14 +26,6 @@
         android:textStyle="bold" />
 
     <include
-        android:id="@+id/btnFacebook"
-        layout="@layout/view_boton_ingreso_facebook"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="30dp"
-        />
-
-    <include
         android:id="@+id/btnGoogle"
         layout="@layout/view_boton_ingreso_google"
         android:layout_width="match_parent"
@@ -42,13 +34,13 @@
         android:layout_marginBottom="30dp"/>
 
     <include
-        android:id="@+id/etEmail"
+        android:id="@+id/etEmail1"
         layout="@drawable/input_espacio"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
 
     <include
-        android:id="@+id/etEmail"
+        android:id="@+id/etEmail2"
         layout="@drawable/input_espacio"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -72,16 +64,13 @@
         android:textStyle="bold"
         android:buttonTint="#949CFF" />
 
-
-
     <include
         android:id="@+id/btnLogin"
-        layout="@layout/view_boton_ingresar"
+        layout="@layout/view_boton_crear_cuenta"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="20dp"
         android:layout_marginVertical="30dp"/>
-
 
     <TextView
         android:layout_width="wrap_content"
