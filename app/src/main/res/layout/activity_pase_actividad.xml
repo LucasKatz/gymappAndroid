@@ -1,81 +1,41 @@
 <?xml version="1.0" encoding="utf-8"?>
-
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#FFFFFF">
+    android:orientation="vertical"
+    android:background="#F5F5F5">
 
-    <LinearLayout
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:padding="20dp">
-        <RelativeLayout
-            android:layout_width="match_parent"
+        android:padding="20dp"
+        android:background="#FFFFFF"
+        android:elevation="4dp">
+
+        <ImageButton
+            android:id="@+id/btnBackToPanel"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:src="@drawable/ic_arrow_back" />
+
+        <TextView
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:padding="20dp"
-            android:layout_marginBottom="20dp">
-
-            <ImageButton
-                android:id="@+id/btnBackToPanel"
-                android:layout_width="48dp"
-                android:layout_height="48dp"
-                android:layout_alignParentStart="true"
-                android:layout_centerVertical="true"
-                android:background="?attr/selectableItemBackgroundBorderless"
-                android:contentDescription="Volver"
-                android:padding="8dp"
-                android:scaleType="fitCenter"
-                android:src="@drawable/ic_arrow_back" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_toEndOf="@id/btnBackToPanel"
-                android:layout_centerVertical="true"
-                android:layout_marginStart="12dp"
-                android:text="PASE ACTIVIDAD"
-                android:textColor="#3E4152"
-                android:textSize="24sp"
-                android:textStyle="bold" />
-
-        </RelativeLayout>
-
-
-
-        <TextView style="@style/LabelStyle" android:text="Nombre y Apellido" />
-        <EditText style="@style/InputStyle" android:inputType="textPersonName" />
-
-        <TextView style="@style/LabelStyle" android:text="DNI" />
-        <EditText style="@style/InputStyle" android:inputType="number" />
-
-        <TextView style="@style/LabelStyle" android:text="Socio / No Socio" />
-        <EditText style="@style/InputStyle" android:inputType="text" />
-
-        <TextView style="@style/LabelStyle" android:text="Teléfono de contacto" />
-        <EditText style="@style/InputStyle" android:inputType="phone" />
-
-        <TextView style="@style/LabelStyle" android:text="Actividad a Realizar" />
-        <EditText style="@style/InputStyle" android:inputType="text" />
-
-        <TextView style="@style/LabelStyle" android:text="Fecha" />
-        <EditText style="@style/InputStyle" android:inputType="date" />
-
-        <TextView style="@style/LabelStyle" android:text="Precio" />
-        <EditText style="@style/InputStyle" android:inputType="numberDecimal" />
-
-        <androidx.appcompat.widget.AppCompatButton
-            android:id="@+id/btnEmitir"
-            android:layout_width="200dp"
-            android:layout_height="60dp"
-            android:layout_gravity="center_horizontal"
-            android:layout_marginTop="30dp"
-            android:background="@drawable/boton_emitir_pase"
-            android:text="Emitir Pase"
-            android:textAllCaps="false"
-            android:textColor="#FFFFFF"
-            android:textSize="18sp"
+            android:layout_toEndOf="@id/btnBackToPanel"
+            android:layout_centerVertical="true"
+            android:layout_marginStart="12dp"
+            android:text="Pases Diarios (No Socios)"
+            android:textColor="#3E4152"
+            android:textSize="20sp"
             android:textStyle="bold" />
+    </RelativeLayout>
 
-    </LinearLayout>
-</ScrollView>
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rvNoSocios"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:padding="10dp"
+        android:clipToPadding="false" />
+
+</LinearLayout>

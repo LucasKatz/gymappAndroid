@@ -4,8 +4,8 @@ import android.os.Bundle
 import android.widget.ImageButton
 import androidx.appcompat.app.AppCompatActivity
 import com.google.android.material.button.MaterialButton
-import java.text.SimpleDateFormat
-import java.util.*
+import java.time.LocalDate
+import java.time.ZoneId
 
 class VencimientosActivity : AppCompatActivity() {
 
@@ -19,13 +19,31 @@ class VencimientosActivity : AppCompatActivity() {
         val btnProximos = findViewById<MaterialButton>(R.id.btnProximos)
         val btnVolver = findViewById<ImageButton>(R.id.btnBackToPanel)
 
-        // 2. Configuración de Base de Datos y Fecha
+        // 2. Actualizar contadores con la nueva lógica de milisegundos
+        actualizarContadores(btnHoy, btnVencidos, btnProximos)
+
+        // 3. Lógica de los botones
+        btnVolver.setOnClickListener { finish() }
+
+        btnHoy.setOnClickListener { reemplazarFragmento("HOY") }
+        btnVencidos.setOnClickListener { reemplazarFragmento("VENCIDOS") }
+        btnProximos.setOnClickListener { reemplazarFragmento("PROXIMOS") }
+
+        // 4. Cargar fragmento inicial
+        if (savedInstanceState == null) {
+            reemplazarFragmento("HOY")
+        }
+    }
+
+    private fun actualizarContadores(bHoy: MaterialButton, bVenc: MaterialButton, bProx: MaterialButton) {
         val admin = AdminSQLiteOpenHelper(this)
         val db = admin.readableDatabase
-        val sdf = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
-        val hoyStr = sdf.format(Date())
 
-        // 3. Función interna para contar filas en la DB
+        // Lógica de tiempo igual a la del Fragment (java.time)
+        val zona = ZoneId.systemDefault()
+        val hoyInicio = LocalDate.now().atStartOfDay(zona).toInstant().toEpochMilli()
+        val hoyFin = LocalDate.now().plusDays(1).atStartOfDay(zona).toInstant().toEpochMilli()
+
         fun contar(sql: String): Int {
             val c = db.rawQuery(sql, null)
             val res = if (c.moveToFirst()) c.getInt(0) else 0
@@ -33,22 +51,23 @@ class VencimientosActivity : AppCompatActivity() {
             return res
         }
 
-        // 4. Actualizar los textos de los botones con los números reales
-        btnHoy.text = "${contar("SELECT COUNT(*) FROM socios WHERE vencimiento = '$hoyStr'")}\nHoy"
-        btnVencidos.text = "${contar("SELECT COUNT(*) FROM socios WHERE estado = 'Moroso' OR vencimiento < '$hoyStr'")}\nVencidos"
-        btnProximos.text = "${contar("SELECT COUNT(*) FROM socios WHERE vencimiento > '$hoyStr' AND estado != 'Moroso'")}\nPróximos"
+        // --- LAS QUERIES AHORA SON NUMÉRICAS ---
 
-        // 5. Lógica de los botones (Filtros)
-        btnVolver.setOnClickListener { finish() }
+        // HOY: Entre las 00:00:00 de hoy y las 00:00:00 de mañana
+        val numHoy = contar("SELECT COUNT(*) FROM socios WHERE vencimiento >= $hoyInicio AND vencimiento < $hoyFin")
 
-        btnHoy.setOnClickListener { reemplazarFragmento("HOY") }
-        btnVencidos.setOnClickListener { reemplazarFragmento("VENCIDOS") }
-        btnProximos.setOnClickListener { reemplazarFragmento("PROXIMOS") }
+        // VENCIDOS: Menor al inicio de hoy O estado Moroso
+        val numVenc = contar("SELECT COUNT(*) FROM socios WHERE vencimiento < $hoyInicio OR estado = 'Moroso'")
 
-        // 6. Cargar el fragmento inicial por defecto
-        if (savedInstanceState == null) {
-            reemplazarFragmento("HOY")
-        }
+        // PRÓXIMOS: Mayor o igual al inicio de mañana
+        val numProx = contar("SELECT COUNT(*) FROM socios WHERE vencimiento >= $hoyFin AND estado != 'Moroso'")
+
+        // 5. Aplicar textos
+        bHoy.text = "$numHoy\nHoy"
+        bVenc.text = "$numVenc\nVencidos"
+        bProx.text = "$numProx\nPróximos"
+
+        db.close()
     }
 
     private fun reemplazarFragmento(filtro: String) {

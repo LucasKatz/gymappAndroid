@@ -1,56 +1,128 @@
 package com.example.clubdeportivodam
 
+import android.content.ContentValues
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
-import android.widget.EditText
-import android.widget.Toast
+import android.widget.*
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import java.time.LocalDate
+import java.time.ZoneOffset
+import java.time.format.DateTimeFormatter
 
 class RegistroSocioFragment2 : Fragment() {
 
     private lateinit var viewModel: SocioViewModel
+    private lateinit var spEstado: AutoCompleteTextView
+    private lateinit var spActividades: AutoCompleteTextView
+    private lateinit var spPago: AutoCompleteTextView
+    private lateinit var etVencimiento: EditText
+    private lateinit var etMonto: EditText
+    private lateinit var btnFinalizar: Button
 
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        // 1. Inflamos la vista del fragmento 2
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val view = inflater.inflate(R.layout.fragment_registro_socio_2, container, false)
-
-        // 2. Conectamos con el ViewModel compartido de la Activity
         viewModel = ViewModelProvider(requireActivity()).get(SocioViewModel::class.java)
 
-        // 3. Referencias a los componentes del XML
-        val etCategoria = view.findViewById<EditText>(R.id.etCategoria)
-        val etVencimiento = view.findViewById<EditText>(R.id.etVencimiento)
-        val btnSiguiente = view.findViewById<Button>(R.id.btnSiguiente2)
+        spEstado = view.findViewById(R.id.spinnerEstado)
+        spActividades = view.findViewById(R.id.spinnerActividades)
+        spPago = view.findViewById(R.id.spinnerPago)
+        etVencimiento = view.findViewById(R.id.etVencimiento)
+        etMonto = view.findViewById(R.id.etMonto)
+        btnFinalizar = view.findViewById(R.id.btnConfirmarInscripcion)
 
-        // 4. Configuración del botón Siguiente
-        btnSiguiente.setOnClickListener {
-            val categoria = etCategoria.text.toString()
-            val vencimiento = etVencimiento.text.toString()
+        configurarLogica()
+        btnFinalizar.setOnClickListener { guardarRegistroFinal() }
 
-            if (categoria.isNotEmpty()) {
-                // GUARDAMOS EN EL VIEWMODEL
-                viewModel.categoria = categoria
-                viewModel.vencimiento = vencimiento
-
-                // 5. Navegamos al Fragmento 3 (Paso final)
-                parentFragmentManager.beginTransaction()
-                    .replace(R.id.fragment_container_registros, RegistroSocioFragment3())
-                    .addToBackStack(null) // Permite volver al paso anterior con el botón atrás
-                    .commit()
-            } else {
-                Toast.makeText(requireContext(), "Por favor, ingresa una categoría", Toast.LENGTH_SHORT).show()
-                etCategoria.error = "Campo requerido"
-            }
-        }
-        etCategoria.setText(viewModel.categoria)
-        etVencimiento.setText(viewModel.vencimiento)
         return view
+    }
+
+    private fun configurarLogica() {
+        val estados = arrayOf("Socio", "No Socio")
+        spEstado.setAdapter(ArrayAdapter(requireContext(), R.layout.list_item, estados))
+        spEstado.setOnClickListener { spEstado.showDropDown() }
+
+        val metodosPago = arrayOf("Tarjeta", "Transferencia", "Efectivo")
+        spPago.setAdapter(ArrayAdapter(requireContext(), R.layout.list_item, metodosPago))
+        spPago.setOnClickListener { spPago.showDropDown() }
+
+        spEstado.setOnItemClickListener { _, _, position, _ ->
+            val seleccion = estados[position]
+            spActividades.setText("")
+            etVencimiento.setText("")
+
+            val listaAct = if (seleccion == "Socio") {
+                mutableListOf("Cuota")
+            } else {
+                val desdeDB = obtenerActividadesDeDB()
+                desdeDB.add("Pase Diario")
+                desdeDB
+            }
+            spActividades.setAdapter(ArrayAdapter(requireContext(), R.layout.list_item, listaAct))
+            spActividades.setOnClickListener { spActividades.showDropDown() }
+        }
+
+        spActividades.setOnItemClickListener { _, _, _, _ ->
+            val hoy = LocalDate.now()
+            val formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy")
+            val esCuota = spActividades.text.toString() == "Cuota"
+
+            val vencimiento = if (esCuota) hoy.plusMonths(1) else hoy.plusDays(1)
+            etVencimiento.setText(vencimiento.format(formatter))
+        }
+    }
+
+    private fun obtenerActividadesDeDB(): MutableList<String> {
+        val nombres = mutableListOf<String>()
+        val admin = AdminSQLiteOpenHelper(requireContext())
+        val db = admin.readableDatabase
+        val cursor = db.rawQuery("SELECT nombre FROM actividades", null)
+        if (cursor.moveToFirst()) {
+            do { nombres.add(cursor.getString(0)) } while (cursor.moveToNext())
+        }
+        cursor.close()
+        return nombres
+    }
+
+    private fun guardarRegistroFinal() {
+        val estadoTxt = spEstado.text.toString()
+        val actividadTxt = spActividades.text.toString()
+        val montoTxt = etMonto.text.toString()
+
+        if (estadoTxt.isEmpty() || actividadTxt.isEmpty() || montoTxt.isEmpty()) {
+            Toast.makeText(context, "Complete todos los campos", Toast.LENGTH_SHORT).show()
+            return
+        }
+
+        // --- LÓGICA DE FECHA JAVA.TIME ---
+        val hoy = LocalDate.now()
+        val fechaVenc = if (actividadTxt == "Cuota") hoy.plusMonths(1) else hoy.plusDays(1)
+        // Convertimos a milisegundos (Long) para la base de datos
+        val vencimientoMillis = fechaVenc.atStartOfDay(ZoneOffset.UTC).toInstant().toEpochMilli()
+
+        val admin = AdminSQLiteOpenHelper(requireContext())
+        val db = admin.writableDatabase
+
+        val registro = ContentValues().apply {
+            put("dni", viewModel.dni)
+            put("nombre", viewModel.nombre)
+            put("email", viewModel.Email)
+            put("telefono", viewModel.telefono)
+            put("categoria", estadoTxt)
+            put("vencimiento", vencimientoMillis) // GUARDAMOS COMO LONG
+            put("monto", montoTxt.toDouble())
+            put("estado", "Al día")
+        }
+
+        val res = db.insert("socios", null, registro)
+        if (res != -1L) {
+            Toast.makeText(context, "Registro Exitoso", Toast.LENGTH_LONG).show()
+            activity?.finish()
+        } else {
+            Toast.makeText(context, "Error: DNI duplicado", Toast.LENGTH_SHORT).show()
+        }
+        db.close()
     }
 }

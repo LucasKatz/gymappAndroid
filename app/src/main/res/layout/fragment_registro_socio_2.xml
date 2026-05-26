@@ -1,44 +1,89 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="#FFFFFF">
 
-<LinearLayout
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:orientation="vertical"
-    android:padding="20dp">
-
-
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerVertical="true"
-        android:layout_marginVertical="12sp"
-        android:text="Sección 2:Configuración de Socio"
-        android:textColor="#3E4152"
-        android:textSize="24sp"
-        android:textStyle="bold" />
-
-    <TextView style="@style/LabelStyle" android:text="Categoria" />
-    <EditText style="@style/InputStyle" android:id="@+id/etCategoria" android:inputType="text" />
-
-    <TextView style="@style/LabelStyle" android:text="Actividades" />
-    <EditText style="@style/InputStyle" android:inputType="text" android:layout_marginBottom="15dp"/>
-    <EditText style="@style/InputStyle" android:inputType="text" android:layout_marginBottom="15dp"/>
-    <EditText style="@style/InputStyle" android:inputType="text" />
-
-    <TextView style="@style/LabelStyle" android:text="Vencimiento de Cuota" />
-    <EditText style="@style/InputStyle" android:id="@+id/etVencimiento" android:inputType="date"   />
-
-
-    <Button
-        android:id="@+id/btnSiguiente2"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="24dp"
-        android:text="Siguiente"
-        android:backgroundTint="#004D40"/>
-</LinearLayout>
+        android:orientation="vertical"
+        android:padding="20dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"
+            android:text="Sección 2: Inscripción y Pago"
+            android:textColor="#3E4152"
+            android:textSize="20sp"
+            android:textStyle="bold" />
+
+        <TextView style="@style/LabelStyle" android:text="Condición del Cliente" />
+        <com.google.android.material.textfield.TextInputLayout
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="12dp">
+            <AutoCompleteTextView
+                android:id="@+id/spinnerEstado"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Seleccione Socio o No Socio"
+                android:inputType="none" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <TextView style="@style/LabelStyle" android:text="Actividad / Plan" />
+        <com.google.android.material.textfield.TextInputLayout
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="12dp">
+            <AutoCompleteTextView
+                android:id="@+id/spinnerActividades"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Seleccione una opción"
+                android:inputType="none" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <TextView style="@style/LabelStyle" android:text="Método de Pago" />
+        <com.google.android.material.textfield.TextInputLayout
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="12dp">
+            <AutoCompleteTextView
+                android:id="@+id/spinnerPago"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Seleccione método"
+                android:inputType="none" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <TextView style="@style/LabelStyle" android:text="Vencimiento" />
+        <EditText
+            android:id="@+id/etVencimiento"
+            style="@style/InputStyle"
+            android:focusable="false"
+            android:textColor="#D32F2F"
+            android:textStyle="bold" />
+
+        <TextView style="@style/LabelStyle" android:text="Monto a abonar" />
+        <EditText
+            android:id="@+id/etMonto"
+            style="@style/InputStyle"
+            android:inputType="numberDecimal" />
+
+        <Button
+            android:id="@+id/btnConfirmarInscripcion"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="24dp"
+            android:text="Finalizar Registro"
+            android:backgroundTint="#004D40"
+            android:textColor="#FFFFFF"/>
+
+    </LinearLayout>
 </ScrollView>

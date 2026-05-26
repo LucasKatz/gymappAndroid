@@ -8,6 +8,7 @@ import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import android.widget.Toast
+import android.util.Log
 
 class ListadoSociosFragment : Fragment() {
 
@@ -27,7 +28,6 @@ class ListadoSociosFragment : Fragment() {
         return view
     }
 
-    // Agregamos onResume para que la lista se refresque al volver de registrar un socio
     override fun onResume() {
         super.onResume()
         cargarYMostrarSocios()
@@ -39,7 +39,6 @@ class ListadoSociosFragment : Fragment() {
             val db = admin.readableDatabase
             val lista = mutableListOf<Socio>()
 
-            // Traemos todo para no errar nombres
             val cursor = db.rawQuery("SELECT * FROM socios", null)
 
             if (cursor.moveToFirst()) {
@@ -50,17 +49,25 @@ class ListadoSociosFragment : Fragment() {
                 val iCat = cursor.getColumnIndex("categoria")
                 val iVen = cursor.getColumnIndex("vencimiento")
                 val iTel = cursor.getColumnIndex("telefono")
+                val iMon = cursor.getColumnIndex("monto") // Agregado
                 val iEst = cursor.getColumnIndex("estado")
 
                 do {
-                    // Verificamos que la columna exista (-1 significa que no existe)
+                    // 1. Extraemos el vencimiento como LONG (importante)
+                    // Si la columna no existe o es nula, usamos 0L
+                    val vencimientoLong = if (iVen != -1) cursor.getLong(iVen) else 0L
+
+                    // 2. Extraemos el monto como DOUBLE
+                    val montoDouble = if (iMon != -1) cursor.getDouble(iMon) else 0.0
+
                     val socio = Socio(
-                        dni = if (iDni != -1) cursor.getInt(iDni).toString() else "0",
+                        dni = if (iDni != -1) cursor.getString(iDni) ?: "0" else "0",
                         nombre = if (iNom != -1) cursor.getString(iNom) ?: "N/A" else "N/A",
                         Email = if (iEmail != -1) cursor.getString(iEmail) ?: "N/A" else "N/A",
-                        categoria = if (iCat != -1) cursor.getString(iCat) ?: "S/C" else "S/C",
-                        vencimiento = if (iVen != -1) cursor.getString(iVen) ?: "S/V" else "S/V",
                         telefono = if (iTel != -1) cursor.getString(iTel) ?: "-" else "-",
+                        categoria = if (iCat != -1) cursor.getString(iCat) ?: "S/C" else "S/C",
+                        vencimiento = vencimientoLong, // Pasamos el Long, no un String
+                        monto = montoDouble,           // Agregamos el parámetro faltante
                         estado = if (iEst != -1) cursor.getString(iEst) ?: "Activo" else "Activo"
                     )
                     lista.add(socio)
@@ -72,8 +79,7 @@ class ListadoSociosFragment : Fragment() {
             rvSocios.adapter = SocioAdapter(lista)
 
         } catch (e: Exception) {
-            // Esto te mostrará el error exacto en un mensaje flotante
-            android.util.Log.e("SQL_ERROR", "Error: ${e.message}")
+            Log.e("SQL_ERROR", "Error: ${e.message}")
             Toast.makeText(requireContext(), "Error al listar: ${e.message}", Toast.LENGTH_LONG).show()
         }
     }

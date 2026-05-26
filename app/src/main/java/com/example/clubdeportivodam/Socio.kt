@@ -5,8 +5,9 @@ data class Socio(
     val dni: String,
     val nombre: String,
     val Email: String,
-    val categoria: String,
-    val vencimiento: String,
     val telefono: String,
+    val categoria: String,
+    val vencimiento: Long, // Debe ser Long
+    val monto: Double,     // ¡No olvides este!
     val estado: String
 )

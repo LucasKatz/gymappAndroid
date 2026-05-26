@@ -4,23 +4,35 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import java.text.SimpleDateFormat
-import java.util.*
+import java.time.LocalDate
+import java.time.ZoneOffset
 
-class ListaVencimientos: Fragment() {
+class ListaVencimientos : Fragment() {
 
     private lateinit var rv: RecyclerView
+    private lateinit var tvVacio: TextView
     private var filtro: String = "HOY"
+
+    companion object {
+        fun newInstance(filtro: String): ListaVencimientos {
+            val fragment = ListaVencimientos()
+            val args = Bundle()
+            args.putString("FILTRO", filtro)
+            fragment.arguments = args
+            return fragment
+        }
+    }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val view = inflater.inflate(R.layout.fragment_lista_vencimientos, container, false)
         rv = view.findViewById(R.id.rvSociosVencimientos)
+        tvVacio = view.findViewById(R.id.tvMensajeVacio)
         rv.layoutManager = LinearLayoutManager(context)
 
-        // Recuperar el filtro enviado
         filtro = arguments?.getString("FILTRO") ?: "HOY"
 
         cargarDatos()
@@ -30,48 +42,54 @@ class ListaVencimientos: Fragment() {
     private fun cargarDatos() {
         val admin = AdminSQLiteOpenHelper(requireContext())
         val db = admin.readableDatabase
-        val lista = mutableListOf<Socio>() // Asegúrate de tener tu data class Socio
+        val lista = mutableListOf<Socio>()
 
-        val sdf = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
-        val hoyStr = sdf.format(Date())
+        val zona = java.time.ZoneId.systemDefault()
+        val hoyInicio = LocalDate.now().atStartOfDay(zona).toInstant().toEpochMilli()
+        val hoyFin = LocalDate.now().plusDays(1).atStartOfDay(zona).toInstant().toEpochMilli()
 
-        // Lógica de Query según el botón
         val query = when (filtro) {
-            "HOY" -> "SELECT * FROM socios WHERE vencimiento = '$hoyStr'"
-            "VENCIDOS" -> "SELECT * FROM socios WHERE estado = 'Moroso'"
-            "PROXIMOS" -> "SELECT * FROM socios WHERE vencimiento > '$hoyStr' AND estado != 'Moroso'"
+            "HOY" -> "SELECT * FROM socios WHERE vencimiento >= $hoyInicio AND vencimiento < $hoyFin"
+            "VENCIDOS" -> "SELECT * FROM socios WHERE (vencimiento < $hoyInicio AND estado != 'Al día') OR estado = 'Moroso'"
+            "PROXIMOS" -> "SELECT * FROM socios WHERE vencimiento >= $hoyFin AND estado != 'Moroso'"
             else -> "SELECT * FROM socios"
         }
 
         val cursor = db.rawQuery(query, null)
+        // Reemplaza el bloque do-while por este:
         if (cursor.moveToFirst()) {
-            do {
-                // AQUÍ ESTABA EL ERROR: Debes pasar los 8 parámetros
-                lista.add(Socio(
-                    dni = cursor.getString(0),
-                    nombre = cursor.getString(1),
-                    Email = cursor.getString(2),    // Ojo: tu Adapter usa socio.Email con E mayúscula
-                    telefono = cursor.getString(3),
-                    categoria = cursor.getString(4),
-                    vencimiento = cursor.getString(5),
+            val iDni = cursor.getColumnIndex("dni")
+            val iNom = cursor.getColumnIndex("nombre")
+            val iEma = cursor.getColumnIndex("email")
+            val iTel = cursor.getColumnIndex("telefono")
+            val iCat = cursor.getColumnIndex("categoria")
+            val iVen = cursor.getColumnIndex("vencimiento")
+            val iMon = cursor.getColumnIndex("monto")
+            val iEst = cursor.getColumnIndex("estado")
 
-                    estado = cursor.getString(6)
+            do {
+                lista.add(Socio(
+                    dni = cursor.getString(iDni),
+                    nombre = cursor.getString(iNom),
+                    Email = cursor.getString(iEma),
+                    telefono = cursor.getString(iTel),
+                    categoria = cursor.getString(iCat),
+                    vencimiento = cursor.getLong(iVen),
+                    monto = cursor.getDouble(iMon), // <--- Agregado
+                    estado = cursor.getString(iEst)
                 ))
             } while (cursor.moveToNext())
         }
         cursor.close()
+        db.close()
 
-        // Aquí usas un Adapter similar al de Actividades pero para Socios
-        rv.adapter = SocioAdapter(lista)
-    }
-
-    companion object {
-        fun newInstance(filtro: String): ListaVencimientos {
-            val fragment = ListaVencimientos()
-            val args = Bundle()
-            args.putString("FILTRO", filtro)
-            fragment.arguments = args
-            return fragment
+        if (lista.isEmpty()) {
+            rv.visibility = View.GONE
+            tvVacio.visibility = View.VISIBLE
+        } else {
+            rv.visibility = View.VISIBLE
+            tvVacio.visibility = View.GONE
+            rv.adapter = SocioAdapter(lista)
         }
     }
 }
