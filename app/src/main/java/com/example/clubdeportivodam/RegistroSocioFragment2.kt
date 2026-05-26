@@ -57,7 +57,9 @@ class RegistroSocioFragment2 : Fragment() {
                 mutableListOf("Cuota")
             } else {
                 val desdeDB = obtenerActividadesDeDB()
-                desdeDB.add("Pase Diario")
+                if (!desdeDB.contains("Pase Diario")) {
+                    desdeDB.add("Pase Diario")
+                }
                 desdeDB
             }
             spActividades.setAdapter(ArrayAdapter(requireContext(), R.layout.list_item, listaAct))
@@ -67,9 +69,14 @@ class RegistroSocioFragment2 : Fragment() {
         spActividades.setOnItemClickListener { _, _, _, _ ->
             val hoy = LocalDate.now()
             val formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy")
-            val esCuota = spActividades.text.toString() == "Cuota"
+            val actividadSeleccionada = spActividades.text.toString()
 
-            val vencimiento = if (esCuota) hoy.plusMonths(1) else hoy.plusDays(1)
+            // Si es Cuota vence en 1 mes, si es actividad o pase diario vence mañana
+            val vencimiento = if (actividadSeleccionada == "Cuota") {
+                hoy.plusMonths(1)
+            } else {
+                hoy.plusDays(1)
+            }
             etVencimiento.setText(vencimiento.format(formatter))
         }
     }
@@ -96,10 +103,14 @@ class RegistroSocioFragment2 : Fragment() {
             return
         }
 
-        // --- LÓGICA DE FECHA JAVA.TIME ---
+        // 1. DETERMINAR CATEGORÍA:
+        // Si el estado es "Socio", guardamos "Socio".
+        // Si es "No Socio", guardamos la actividad (ej: "Yoga") o "Pase Diario".
+        val categoriaFinal = if (estadoTxt == "Socio") "Socio" else actividadTxt
+
+        // 2. LÓGICA DE FECHA (Milisegundos)
         val hoy = LocalDate.now()
         val fechaVenc = if (actividadTxt == "Cuota") hoy.plusMonths(1) else hoy.plusDays(1)
-        // Convertimos a milisegundos (Long) para la base de datos
         val vencimientoMillis = fechaVenc.atStartOfDay(ZoneOffset.UTC).toInstant().toEpochMilli()
 
         val admin = AdminSQLiteOpenHelper(requireContext())
@@ -110,8 +121,11 @@ class RegistroSocioFragment2 : Fragment() {
             put("nombre", viewModel.nombre)
             put("email", viewModel.Email)
             put("telefono", viewModel.telefono)
-            put("categoria", estadoTxt)
-            put("vencimiento", vencimientoMillis) // GUARDAMOS COMO LONG
+
+            // --- AQUÍ SE GUARDA LA ACTIVIDAD SELECCIONADA ---
+            put("categoria", categoriaFinal)
+
+            put("vencimiento", vencimientoMillis)
             put("monto", montoTxt.toDouble())
             put("estado", "Al día")
         }
@@ -119,9 +133,9 @@ class RegistroSocioFragment2 : Fragment() {
         val res = db.insert("socios", null, registro)
         if (res != -1L) {
             Toast.makeText(context, "Registro Exitoso", Toast.LENGTH_LONG).show()
-            activity?.finish()
+            activity?.finish() // Cierra el flujo de registro y vuelve al panel
         } else {
-            Toast.makeText(context, "Error: DNI duplicado", Toast.LENGTH_SHORT).show()
+            Toast.makeText(context, "Error: DNI ya registrado", Toast.LENGTH_SHORT).show()
         }
         db.close()
     }
