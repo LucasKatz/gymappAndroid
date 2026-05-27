@@ -124,30 +124,41 @@ class LoginActivity : AppCompatActivity() {
                 val account = task.getResult(ApiException::class.java)
                 val emailGoogle = account?.email ?: ""
 
-                // Validación para Google Sign-In
+                // 1. Verificamos si es el Administrador
                 if (emailGoogle == ADMIN_USER) {
                     irAPanel()
-                } else {
-                    val adminDB = AdminSQLiteOpenHelper(this)
-                    val db = adminDB.readableDatabase
-                    val c = db.rawQuery("SELECT dni FROM socios WHERE email = ?", arrayOf(emailGoogle))
+                    return
+                }
 
-                    if (c.moveToFirst()) {
-                        val dniSocio = c.getString(0)
-                        c.close()
-                        db.close()
-                        irAPerfilSocio(dniSocio)
-                    } else {
-                        c.close()
-                        db.close()
-                        googleSignInClient.signOut()
-                        Toast.makeText(this, "El correo $emailGoogle no está registrado como socio", Toast.LENGTH_LONG).show()
+                // 2. Buscamos en la base de datos local si ese mail existe en la tabla SOCIOS
+                val adminDB = AdminSQLiteOpenHelper(this)
+                val db = adminDB.readableDatabase
+                val c = db.rawQuery("SELECT dni FROM socios WHERE email = ?", arrayOf(emailGoogle))
+
+                if (c.moveToFirst()) {
+                    // SI EXISTE: Extraemos el DNI y entramos
+                    val dniSocio = c.getString(0)
+                    c.close()
+                    db.close()
+
+                    Toast.makeText(this, "Bienvenido socio: $emailGoogle", Toast.LENGTH_SHORT).show()
+                    irAPerfilSocio(dniSocio)
+                } else {
+                    // NO EXISTE: Aquí aplicamos la restricción total
+                    c.close()
+                    db.close()
+
+                    // IMPORTANTE: Cerramos la sesión de Google para que no intente entrar automático la próxima vez
+                    googleSignInClient.signOut().addOnCompleteListener {
+                        Toast.makeText(this, "Acceso denegado: El correo $emailGoogle no es socio del club", Toast.LENGTH_LONG).show()
                     }
+
+                    Log.w("LoginGoogle", "Intento de acceso fallido: $emailGoogle no está en la DB")
                 }
 
             } catch (e: ApiException) {
-                Log.e("GoogleError", "Error: ${e.statusCode}")
-                Toast.makeText(this, "Error de conexión con Google", Toast.LENGTH_SHORT).show()
+                Log.e("GoogleError", "Error al conectar con Google: ${e.statusCode}")
+                Toast.makeText(this, "Error de autenticación", Toast.LENGTH_SHORT).show()
             }
         }
     }

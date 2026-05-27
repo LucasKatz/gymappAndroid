@@ -14,8 +14,6 @@ class CreateAccountActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_create_account)
 
-        // Referencias a los componentes
-        // Buscamos los EditText que están dentro de los <include>
         val etEmail1 = findViewById<EditText>(R.id.etEmail1)
         val etEmail2 = findViewById<EditText>(R.id.etEmail2)
         val etPassword = findViewById<EditText>(R.id.etPassword)
@@ -27,7 +25,6 @@ class CreateAccountActivity : AppCompatActivity() {
             val email2 = etEmail2.text.toString().trim()
             val pass = etPassword.text.toString().trim()
 
-            // Validaciones de negocio
             if (email1.isEmpty() || email2.isEmpty() || pass.isEmpty()) {
                 Toast.makeText(this, "Debe completar todos los campos", Toast.LENGTH_SHORT).show()
             }
@@ -38,41 +35,61 @@ class CreateAccountActivity : AppCompatActivity() {
                 Toast.makeText(this, "Debe aceptar los términos y condiciones", Toast.LENGTH_SHORT).show()
             }
             else {
-                // Si todo está bien, registramos en la BD
-                registrarUsuario(email1, pass)
+                // LLAMADA A LA NUEVA FUNCIÓN DE VALIDACIÓN
+                validarYRegistrar(email1, pass)
             }
         }
     }
 
-    private fun registrarUsuario(email: String, pass: String) {
+    private fun validarYRegistrar(email: String, pass: String) {
         val admin = AdminSQLiteOpenHelper(this)
-        val db = admin.writableDatabase
+        val db = admin.readableDatabase // Usamos readable para consultar primero
 
-        // Consultamos si el email ya existe
-        val consulta = db.rawQuery("SELECT email FROM usuarios WHERE email = '$email'", null)
+        // 1. PASO CRÍTICO: ¿Es socio activo del club?
+        // Buscamos si el email existe en la tabla 'socios'
+        val cursorSocio = db.rawQuery("SELECT dni FROM socios WHERE email = ?", arrayOf(email))
 
-        if (consulta.moveToFirst()) {
-            Toast.makeText(this, "Este correo ya se encuentra registrado", Toast.LENGTH_SHORT).show()
+        if (!cursorSocio.moveToFirst()) {
+            // Si no está en la tabla socios, no lo dejamos crear cuenta
+            Toast.makeText(this, "Acceso denegado: Este correo no figura como socio del club.", Toast.LENGTH_LONG).show()
+            cursorSocio.close()
+            db.close()
+            return
+        }
+
+        val dniSocio = cursorSocio.getString(0) // Obtenemos su DNI para el log o mensaje
+        cursorSocio.close()
+
+        // 2. ¿Ya tiene una cuenta de usuario creada?
+        val cursorUser = db.rawQuery("SELECT email FROM usuarios WHERE email = ?", arrayOf(email))
+
+        if (cursorUser.moveToFirst()) {
+            Toast.makeText(this, "Usted ya tiene una cuenta creada. Intente iniciar sesión.", Toast.LENGTH_SHORT).show()
+            cursorUser.close()
             db.close()
         } else {
-            // Preparamos los datos para insertar
+            cursorUser.close()
+
+            // 3. REGISTRO FINAL (Si pasó las dos pruebas anteriores)
+            val dbWrite = admin.writableDatabase
             val registro = ContentValues()
             registro.put("email", email)
             registro.put("password", pass)
 
-            // Insertamos en la tabla usuarios
-            val resultado = db.insert("usuarios", null, registro)
-            db.close()
+            val resultado = dbWrite.insert("usuarios", null, registro)
+            dbWrite.close()
 
             if (resultado != -1L) {
-                Toast.makeText(this, "Registro exitoso", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, "¡Cuenta creada con éxito! Bienvenido.", Toast.LENGTH_SHORT).show()
 
-                // Redirigir al Panel de Gestión
-                val intent = Intent(this, PanelGestionActivity::class.java)
+                // Como es un socio "normal", no debería ir al Panel de Gestión (Admin)
+                // Lo mandamos directamente a su Carnet (PerfilSocioActivity)
+                val intent = Intent(this, PerfilSocioActivity::class.java)
+                intent.putExtra("DNI_SOCIO", dniSocio)
                 startActivity(intent)
-                finish() // Cerramos esta actividad
+                finish()
             } else {
-                Toast.makeText(this, "Error al crear la cuenta", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, "Error al guardar en el sistema", Toast.LENGTH_SHORT).show()
             }
         }
     }
