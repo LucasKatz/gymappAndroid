@@ -39,25 +39,24 @@ class ListadoSociosFragment : Fragment() {
             val db = admin.readableDatabase
             val lista = mutableListOf<Socio>()
 
-            val cursor = db.rawQuery("SELECT * FROM socios", null)
+            // --- CAMBIO CLAVE: Agregamos el WHERE para filtrar por categoría ---
+            // Usamos LIKE para que tome "Socio", "Socio Pleno", "Socio Familiar", etc.
+            // Si tu categoría es exacta, usa: WHERE categoria = 'Socio'
+            val cursor = db.rawQuery("SELECT * FROM socios WHERE categoria LIKE ?", arrayOf("%Socio%"))
 
             if (cursor.moveToFirst()) {
-                // Obtenemos los índices de forma segura
                 val iDni = cursor.getColumnIndex("dni")
                 val iNom = cursor.getColumnIndex("nombre")
                 val iEmail = cursor.getColumnIndex("email")
                 val iCat = cursor.getColumnIndex("categoria")
                 val iVen = cursor.getColumnIndex("vencimiento")
                 val iTel = cursor.getColumnIndex("telefono")
-                val iMon = cursor.getColumnIndex("monto") // Agregado
+                val iMon = cursor.getColumnIndex("monto")
                 val iEst = cursor.getColumnIndex("estado")
 
                 do {
-                    // 1. Extraemos el vencimiento como LONG (importante)
-                    // Si la columna no existe o es nula, usamos 0L
+                    // Mantenemos tu lógica de extracción segura
                     val vencimientoLong = if (iVen != -1) cursor.getLong(iVen) else 0L
-
-                    // 2. Extraemos el monto como DOUBLE
                     val montoDouble = if (iMon != -1) cursor.getDouble(iMon) else 0.0
 
                     val socio = Socio(
@@ -66,8 +65,8 @@ class ListadoSociosFragment : Fragment() {
                         Email = if (iEmail != -1) cursor.getString(iEmail) ?: "N/A" else "N/A",
                         telefono = if (iTel != -1) cursor.getString(iTel) ?: "-" else "-",
                         categoria = if (iCat != -1) cursor.getString(iCat) ?: "S/C" else "S/C",
-                        vencimiento = vencimientoLong, // Pasamos el Long, no un String
-                        monto = montoDouble,           // Agregamos el parámetro faltante
+                        vencimiento = vencimientoLong,
+                        monto = montoDouble,
                         estado = if (iEst != -1) cursor.getString(iEst) ?: "Activo" else "Activo"
                     )
                     lista.add(socio)
@@ -76,11 +75,12 @@ class ListadoSociosFragment : Fragment() {
             cursor.close()
             db.close()
 
+            // Actualizamos el RecyclerView
             rvSocios.adapter = SocioAdapter(lista)
 
         } catch (e: Exception) {
             Log.e("SQL_ERROR", "Error: ${e.message}")
-            Toast.makeText(requireContext(), "Error al listar: ${e.message}", Toast.LENGTH_LONG).show()
+            Toast.makeText(requireContext(), "Error al filtrar socios: ${e.message}", Toast.LENGTH_LONG).show()
         }
     }
 }

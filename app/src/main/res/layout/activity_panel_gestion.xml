@@ -66,7 +66,7 @@
                     android:padding="16dp"
                     android:orientation="vertical">
                     <ImageView android:layout_width="40dp" android:layout_height="40dp" android:src="@drawable/ic_group" app:tint="@color/white" />
-                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="6" android:textColor="@color/white" android:textSize="22sp" android:textStyle="bold" />
+                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:textColor="@color/white" android:textSize="22sp" android:textStyle="bold" />
                     <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Total Socios" android:textColor="@color/white" android:textStyle="bold" />
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
@@ -87,7 +87,7 @@
                     android:padding="16dp"
                     android:orientation="vertical">
                     <ImageView android:layout_width="40dp" android:layout_height="40dp" android:src="@drawable/ic_alert" app:tint="@color/white" />
-                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="2" android:textColor="@color/white" android:textSize="22sp" android:textStyle="bold" />
+                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"  android:textColor="@color/white" android:textSize="22sp" android:textStyle="bold" />
                     <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Cuotas Vencidas" android:textColor="@color/white" android:textStyle="bold" />
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
@@ -108,7 +108,7 @@
                     android:padding="16dp"
                     android:orientation="vertical">
                     <ImageView android:layout_width="40dp" android:layout_height="40dp" android:src="@drawable/ic_pesas" />
-                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="5" android:textColor="#3E4152" android:textSize="22sp" android:textStyle="bold" />
+                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"  android:textColor="#3E4152" android:textSize="22sp" android:textStyle="bold" />
                     <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Actividades" android:textColor="#3E4152" android:textStyle="bold" />
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
@@ -129,7 +129,7 @@
                     android:padding="16dp"
                     android:orientation="vertical">
                     <ImageView android:layout_width="40dp" android:layout_height="40dp" android:src="@drawable/ic_ticket" />
-                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="4" android:textColor="#3E4152" android:textSize="22sp" android:textStyle="bold" />
+                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"  android:textColor="#3E4152" android:textSize="22sp" android:textStyle="bold" />
                     <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Pase Actividad" android:textColor="#3E4152" android:textStyle="bold" />
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
