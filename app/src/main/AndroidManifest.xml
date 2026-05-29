@@ -37,6 +37,7 @@
         <activity android:name=".RegistroSocioActivity" />
         <activity android:name=".PerfilSocioActivity" />
         <activity android:name=".GestionPagosActivity" />
+        <activity android:name=".ListadoPagosActivity"  />
 
     </application>
 

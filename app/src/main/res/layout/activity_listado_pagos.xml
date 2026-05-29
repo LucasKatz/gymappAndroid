@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="#F5F5F5">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="20dp"
+        android:background="@color/white">
+
+        <ImageButton
+            android:id="@+id/btnBackPagos"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:src="@drawable/ic_arrow_back" /> <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:text="Historial de Pagos"
+        android:textColor="#3E4152"
+        android:textSize="20sp"
+        android:textStyle="bold" />
+    </RelativeLayout>
+
+    <ListView
+        android:id="@+id/lvHistorialPagos"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:divider="#EEEEEE"
+        android:dividerHeight="1dp"
+        android:padding="10dp"
+        android:clipToPadding="false" />
+
+</LinearLayout>

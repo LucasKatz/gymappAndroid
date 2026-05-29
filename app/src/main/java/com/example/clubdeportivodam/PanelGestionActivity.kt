@@ -44,5 +44,10 @@ class PanelGestionActivity : AppCompatActivity() {
             val intent = Intent(this, GestionPagosActivity::class.java)
             startActivity(intent)
         }
+
+        findViewById<MaterialCardView>(R.id.btnVerPagos).setOnClickListener {
+            val intent = android.content.Intent(this, ListadoPagosActivity::class.java)
+            startActivity(intent)
+        }
     }
 }

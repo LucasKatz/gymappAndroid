@@ -103,40 +103,62 @@ class RegistroSocioFragment2 : Fragment() {
             return
         }
 
-        // 1. DETERMINAR CATEGORÍA:
-        // Si el estado es "Socio", guardamos "Socio".
-        // Si es "No Socio", guardamos la actividad (ej: "Yoga") o "Pase Diario".
+        // 1. DETERMINAR CATEGORÍA
         val categoriaFinal = if (estadoTxt == "Socio") "Socio" else actividadTxt
 
-        // 2. LÓGICA DE FECHA (Milisegundos)
+        // 2. LÓGICA DE FECHA
         val hoy = LocalDate.now()
+        val formatterDB = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss") // Formato para la tabla pagos
+        val fechaActualStr = hoy.atStartOfDay().format(formatterDB)
+
         val fechaVenc = if (actividadTxt == "Cuota") hoy.plusMonths(1) else hoy.plusDays(1)
+        // Guardamos en milisegundos para la tabla socios (como lo tenías)
         val vencimientoMillis = fechaVenc.atStartOfDay(ZoneOffset.UTC).toInstant().toEpochMilli()
 
         val admin = AdminSQLiteOpenHelper(requireContext())
         val db = admin.writableDatabase
 
-        val registro = ContentValues().apply {
-            put("dni", viewModel.dni)
-            put("nombre", viewModel.nombre)
-            put("email", viewModel.Email)
-            put("telefono", viewModel.telefono)
+        // Iniciamos una transacción para asegurarnos de que se guarden ambos o ninguno
+        db.beginTransaction()
+        try {
+            // --- A. INSERTAR EN TABLA SOCIOS ---
+            val registroSocio = ContentValues().apply {
+                put("dni", viewModel.dni)
+                put("nombre", viewModel.nombre)
+                put("email", viewModel.Email)
+                put("telefono", viewModel.telefono)
+                put("categoria", categoriaFinal)
+                put("vencimiento", vencimientoMillis)
+                put("monto", montoTxt.toDouble())
+                put("estado", "Al día")
+            }
 
-            // --- AQUÍ SE GUARDA LA ACTIVIDAD SELECCIONADA ---
-            put("categoria", categoriaFinal)
+            val resSocio = db.insert("socios", null, registroSocio)
 
-            put("vencimiento", vencimientoMillis)
-            put("monto", montoTxt.toDouble())
-            put("estado", "Al día")
+            if (resSocio != -1L) {
+                // --- B. INSERTAR EN TABLA PAGOS (Historial) ---
+                val registroPago = ContentValues().apply {
+                    put("dni_socio", viewModel.dni)
+                    put("nombre_socio", viewModel.nombre)
+                    put("actividad", actividadTxt) // Ej: "Cuota", "Yoga" o "Pase Diario"
+                    put("monto", montoTxt.toDouble())
+                    put("fecha", fechaActualStr)
+                }
+
+                db.insert("pagos", null, registroPago)
+
+                db.setTransactionSuccessful() // Confirma los cambios en la DB
+
+                Toast.makeText(context, "Socio registrado y Pago asentado", Toast.LENGTH_LONG).show()
+                activity?.finish()
+            } else {
+                Toast.makeText(context, "Error: DNI ya registrado", Toast.LENGTH_SHORT).show()
+            }
+        } catch (e: Exception) {
+            Toast.makeText(context, "Error en el registro: ${e.message}", Toast.LENGTH_SHORT).show()
+        } finally {
+            db.endTransaction()
+            db.close()
         }
-
-        val res = db.insert("socios", null, registro)
-        if (res != -1L) {
-            Toast.makeText(context, "Registro Exitoso", Toast.LENGTH_LONG).show()
-            activity?.finish() // Cierra el flujo de registro y vuelve al panel
-        } else {
-            Toast.makeText(context, "Error: DNI ya registrado", Toast.LENGTH_SHORT).show()
-        }
-        db.close()
     }
 }
