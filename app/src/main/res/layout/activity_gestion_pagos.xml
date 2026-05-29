@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="24dp"
+    android:background="#F8F9FA">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="24dp">
+        <ImageButton
+            android:id="@+id/btnBack"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:src="@drawable/ic_arrow_back" />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:text="GESTIÓN DE PAGOS"
+            android:textStyle="bold"
+            android:textSize="18sp"
+            android:textColor="#3E4152" />
+    </RelativeLayout>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Buscar Socio por Email"
+        android:textSize="12sp"
+        android:textColor="#9E9E9E"
+        android:layout_marginBottom="8dp"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginBottom="20dp">
+        <EditText
+            android:id="@+id/etEmailBusqueda"
+            android:layout_width="0dp"
+            android:layout_height="50dp"
+            android:layout_weight="1"
+            android:hint="ejemplo@mail.com"
+            android:background="@drawable/input_field"
+            android:paddingHorizontal="16dp"
+            android:inputType="textEmailAddress" />
+        <Button
+            android:id="@+id/btnBuscarSocio"
+            android:layout_width="wrap_content"
+            android:layout_height="50dp"
+            android:layout_marginStart="8dp"
+            android:text="Buscar"
+            android:backgroundTint="#1B4F72" />
+    </LinearLayout>
+
+    <androidx.cardview.widget.CardView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:cardCornerRadius="16dp"
+        app:cardElevation="8dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="20dp">
+
+            <TextView
+                android:id="@+id/tvNombreResultado"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Socio no seleccionado"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                android:textColor="#3E4152" />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="#EEEEEE"
+                android:layout_marginVertical="16dp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Seleccionar Actividad"
+                android:textSize="12sp"
+                android:textColor="#9E9E9E" />
+
+            <Spinner
+                android:id="@+id/spinnerActividades"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:layout_marginTop="8dp"
+                android:background="@drawable/input_field"
+                android:spinnerMode="dropdown"
+                android:popupBackground="#FFFFFF" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginTop="24dp"
+                android:gravity="center_vertical">
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Total a Pagar:"
+                    android:textSize="16sp" />
+                <TextView
+                    android:id="@+id/tvMontoPagar"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="$ 0.00"
+                    android:textSize="24sp"
+                    android:textStyle="bold"
+                    android:textColor="#1B4F72" />
+            </LinearLayout>
+
+            <Button
+                android:id="@+id/btnConfirmarPago"
+                android:layout_width="match_parent"
+                android:layout_height="56dp"
+                android:layout_marginTop="24dp"
+                android:text="REGISTRAR PAGO"
+                android:backgroundTint="#27AE60"
+                app:cornerRadius="12dp" />
+
+        </LinearLayout>
+    </androidx.cardview.widget.CardView>
+
+</LinearLayout>

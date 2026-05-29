@@ -36,7 +36,10 @@
 
         <activity android:name=".RegistroSocioActivity" />
         <activity android:name=".PerfilSocioActivity" />
+        <activity android:name=".GestionPagosActivity" />
 
     </application>
+
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
 
 </manifest>

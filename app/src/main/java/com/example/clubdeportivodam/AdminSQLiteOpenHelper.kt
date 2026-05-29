@@ -24,6 +24,7 @@ class AdminSQLiteOpenHelper(
         """.trimIndent())
 
         // 2. Crear tabla ACTIVIDADES
+        // Tabla ACTIVIDADES modificada con MONTO
         db.execSQL("""
             CREATE TABLE actividades (
                 id INTEGER PRIMARY KEY AUTOINCREMENT, 
@@ -31,7 +32,8 @@ class AdminSQLiteOpenHelper(
                 profesor TEXT, 
                 horario1 TEXT, 
                 horario2 TEXT, 
-                cupos INTEGER
+                cupos INTEGER,
+                monto REAL
             )
         """.trimIndent())
 
@@ -42,6 +44,17 @@ class AdminSQLiteOpenHelper(
                 password TEXT
             )
         """.trimIndent())
+
+        db.execSQL("""
+    CREATE TABLE pagos (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        dni_socio TEXT,
+        nombre_socio TEXT,
+        actividad TEXT,
+        monto REAL,
+        fecha TEXT
+    )
+""".trimIndent())
     }
 
     override fun onUpgrade(db: SQLiteDatabase, oldVersion: Int, newVersion: Int) {
