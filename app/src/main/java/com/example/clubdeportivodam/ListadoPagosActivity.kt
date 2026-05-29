@@ -17,7 +17,7 @@ class ListadoPagosActivity : AppCompatActivity() {
 
         btnBack.setOnClickListener { finish() }
 
-        // Cargar los datos
+        // Se cargan los datos de los pagos realizados
         mostrarPagos(lvPagos)
     }
 
@@ -26,7 +26,7 @@ class ListadoPagosActivity : AppCompatActivity() {
         val db = dbHelper.readableDatabase
         val lista = mutableListOf<String>()
 
-        // Consultamos la tabla pagos (el ID más alto primero para ver lo más reciente)
+        // Consultamos la tabla pagos
         val cursor = db.rawQuery("SELECT dni_socio, nombre_socio, actividad, monto, fecha FROM pagos ORDER BY id DESC", null)
 
         if (cursor.moveToFirst()) {
@@ -37,7 +37,7 @@ class ListadoPagosActivity : AppCompatActivity() {
                 val monto = cursor.getDouble(3)
                 val fecha = cursor.getString(4)
 
-                // Formateamos como queremos que se vea cada renglón
+
                 val item = """
                     Socio: $nombre (DNI: $dni)
                     Actividad: $actividad
@@ -51,7 +51,7 @@ class ListadoPagosActivity : AppCompatActivity() {
         }
         cursor.close()
 
-        // Usamos un adaptador simple para mostrar la lista
+        // Se muestra la lista con un adapter
         val adapter = ArrayAdapter(this, android.R.layout.simple_list_item_1, lista)
         listView.adapter = adapter
     }

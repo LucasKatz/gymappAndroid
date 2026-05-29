@@ -39,9 +39,7 @@ class ListadoSociosFragment : Fragment() {
             val db = admin.readableDatabase
             val lista = mutableListOf<Socio>()
 
-            // --- CAMBIO CLAVE: Agregamos el WHERE para filtrar por categoría ---
-            // Usamos LIKE para que tome "Socio", "Socio Pleno", "Socio Familiar", etc.
-            // Si tu categoría es exacta, usa: WHERE categoria = 'Socio'
+
             val cursor = db.rawQuery("SELECT * FROM socios WHERE categoria LIKE ?", arrayOf("%Socio%"))
 
             if (cursor.moveToFirst()) {
@@ -55,7 +53,7 @@ class ListadoSociosFragment : Fragment() {
                 val iEst = cursor.getColumnIndex("estado")
 
                 do {
-                    // Mantenemos tu lógica de extracción segura
+
                     val vencimientoLong = if (iVen != -1) cursor.getLong(iVen) else 0L
                     val montoDouble = if (iMon != -1) cursor.getDouble(iMon) else 0.0
 
@@ -75,7 +73,7 @@ class ListadoSociosFragment : Fragment() {
             cursor.close()
             db.close()
 
-            // Actualizamos el RecyclerView
+
             rvSocios.adapter = SocioAdapter(lista)
 
         } catch (e: Exception) {

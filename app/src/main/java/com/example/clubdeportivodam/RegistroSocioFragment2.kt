@@ -112,16 +112,14 @@ class RegistroSocioFragment2 : Fragment() {
         val fechaActualStr = hoy.atStartOfDay().format(formatterDB)
 
         val fechaVenc = if (actividadTxt == "Cuota") hoy.plusMonths(1) else hoy.plusDays(1)
-        // Guardamos en milisegundos para la tabla socios (como lo tenías)
         val vencimientoMillis = fechaVenc.atStartOfDay(ZoneOffset.UTC).toInstant().toEpochMilli()
 
         val admin = AdminSQLiteOpenHelper(requireContext())
         val db = admin.writableDatabase
 
-        // Iniciamos una transacción para asegurarnos de que se guarden ambos o ninguno
         db.beginTransaction()
         try {
-            // --- A. INSERTAR EN TABLA SOCIOS ---
+
             val registroSocio = ContentValues().apply {
                 put("dni", viewModel.dni)
                 put("nombre", viewModel.nombre)
@@ -136,7 +134,7 @@ class RegistroSocioFragment2 : Fragment() {
             val resSocio = db.insert("socios", null, registroSocio)
 
             if (resSocio != -1L) {
-                // --- B. INSERTAR EN TABLA PAGOS (Historial) ---
+
                 val registroPago = ContentValues().apply {
                     put("dni_socio", viewModel.dni)
                     put("nombre_socio", viewModel.nombre)
@@ -147,7 +145,7 @@ class RegistroSocioFragment2 : Fragment() {
 
                 db.insert("pagos", null, registroPago)
 
-                db.setTransactionSuccessful() // Confirma los cambios en la DB
+                db.setTransactionSuccessful()
 
                 Toast.makeText(context, "Socio registrado y Pago asentado", Toast.LENGTH_LONG).show()
                 activity?.finish()

@@ -45,12 +45,11 @@ class CreateAccountActivity : AppCompatActivity() {
         val admin = AdminSQLiteOpenHelper(this)
         val db = admin.readableDatabase // Usamos readable para consultar primero
 
-        // 1. PASO CRÍTICO: ¿Es socio activo del club?
-        // Buscamos si el email existe en la tabla 'socios'
+        // Se busca al socio en BBDD
         val cursorSocio = db.rawQuery("SELECT dni FROM socios WHERE email = ?", arrayOf(email))
 
         if (!cursorSocio.moveToFirst()) {
-            // Si no está en la tabla socios, no lo dejamos crear cuenta
+            // Validación, si no está registrado como Socio, no se puede crear una cuenta
             Toast.makeText(this, "Acceso denegado: Este correo no figura como socio del club.", Toast.LENGTH_LONG).show()
             cursorSocio.close()
             db.close()
@@ -60,7 +59,7 @@ class CreateAccountActivity : AppCompatActivity() {
         val dniSocio = cursorSocio.getString(0) // Obtenemos su DNI para el log o mensaje
         cursorSocio.close()
 
-        // 2. ¿Ya tiene una cuenta de usuario creada?
+        // Validación de usuario registrado/cuenta creada con antelación
         val cursorUser = db.rawQuery("SELECT email FROM usuarios WHERE email = ?", arrayOf(email))
 
         if (cursorUser.moveToFirst()) {
@@ -70,7 +69,7 @@ class CreateAccountActivity : AppCompatActivity() {
         } else {
             cursorUser.close()
 
-            // 3. REGISTRO FINAL (Si pasó las dos pruebas anteriores)
+            // Registro de nuevo usuario (el cliente crea su cuenta para poder loguearse)
             val dbWrite = admin.writableDatabase
             val registro = ContentValues()
             registro.put("email", email)
@@ -82,8 +81,8 @@ class CreateAccountActivity : AppCompatActivity() {
             if (resultado != -1L) {
                 Toast.makeText(this, "¡Cuenta creada con éxito! Bienvenido.", Toast.LENGTH_SHORT).show()
 
-                // Como es un socio "normal", no debería ir al Panel de Gestión (Admin)
-                // Lo mandamos directamente a su Carnet (PerfilSocioActivity)
+                //Redirección a su perfil (carnet)
+
                 val intent = Intent(this, PerfilSocioActivity::class.java)
                 intent.putExtra("DNI_SOCIO", dniSocio)
                 startActivity(intent)

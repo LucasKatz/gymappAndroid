@@ -6,9 +6,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 
-import com.example.clubdeportivodam.AdminSQLiteOpenHelper
-import com.example.clubdeportivodam.Actividad
-import com.example.clubdeportivodam.ActividadAdapter
+
 
 
 class ActividadesActivity : AppCompatActivity() {
@@ -17,24 +15,25 @@ class ActividadesActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_actividades)
 
-        // 1. Configurar el botón de volver (opcional pero recomendado)
+        // Botón de volver
         val btnBack = findViewById<ImageButton>(R.id.btnBackToPanel)
         btnBack.setOnClickListener { finish() }
 
-        // 2. Obtener los datos de la Base de Datos
+        // Obtener los datos de la Base de Datos
 
         val admin = AdminSQLiteOpenHelper(this)
         val listaDeActividades = obtenerActividades(admin)
 
-        // 3. Configurar el RecyclerView
+        // Configuración de  RecyclerView
         val rv = findViewById<RecyclerView>(R.id.rvActividades)
         rv.layoutManager = LinearLayoutManager(this)
 
-        // 4. Conectar el Adapter con la lista de la DB
+        // Conexión del Adapter con la DDBB
         rv.adapter = ActividadAdapter(listaDeActividades)
     }
 
-    // Función para leer la tabla de actividades
+    // Lectura de la tabla de actividades
+
     private fun obtenerActividades(admin: AdminSQLiteOpenHelper): List<Actividad> {
         val lista = mutableListOf<Actividad>()
         val db = admin.readableDatabase

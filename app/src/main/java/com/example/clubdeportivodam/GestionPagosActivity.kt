@@ -25,7 +25,7 @@ class GestionPagosActivity : AppCompatActivity() {
 
         dbHelper = AdminSQLiteOpenHelper(this)
 
-        // Referencias de la UI
+
         val etEmail = findViewById<EditText>(R.id.etEmailBusqueda)
         val btnBuscar = findViewById<Button>(R.id.btnBuscarSocio)
         val tvNombre = findViewById<TextView>(R.id.tvNombreResultado)
@@ -34,19 +34,19 @@ class GestionPagosActivity : AppCompatActivity() {
         val btnConfirmar = findViewById<Button>(R.id.btnConfirmarPago)
         val btnBack = findViewById<ImageButton>(R.id.btnBack)
 
-        // 1. Cargar actividades desde DB al Spinner
+        // Carga de opciones a elegir (actividades) traido de la BBDD
         cargarActividades(spinner)
 
-        // 2. Evento buscar socio por Email
+        // Busqueda del socio via Email
         btnBuscar.setOnClickListener {
             val email = etEmail.text.toString().trim()
             val db = dbHelper.readableDatabase
-            // Ahora pedimos DNI y NOMBRE
+
             val cursor = db.rawQuery("SELECT nombre, dni FROM socios WHERE email = ?", arrayOf(email))
 
             if (cursor.moveToFirst()) {
-                tvNombre.text = cursor.getString(0) // Nombre
-                dniEncontrado = cursor.getString(1) // Guardamos el DNI en la variable
+                tvNombre.text = cursor.getString(0)
+                dniEncontrado = cursor.getString(1)
             } else {
                 tvNombre.text = "Socio no encontrado"
                 dniEncontrado = ""
@@ -55,7 +55,7 @@ class GestionPagosActivity : AppCompatActivity() {
             cursor.close()
         }
 
-        // 3. Evento cambio de actividad en Spinner (Actualiza el precio)
+        // Se actualiza el precio segun la actividad seleccionada
         spinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
                 if (listaActividades.isNotEmpty()) {
@@ -68,7 +68,7 @@ class GestionPagosActivity : AppCompatActivity() {
             }
         }
 
-        // 4. Evento Confirmar Pago (Guarda en BD y genera PDF)
+        // Se confirma el pago y se registra el mismo en la BBDD. Luego se genera el PDF
         btnConfirmar.setOnClickListener {
             val nombreSocio = tvNombre.text.toString()
             val actividad = spinner.selectedItem.toString()
@@ -82,10 +82,10 @@ class GestionPagosActivity : AppCompatActivity() {
             val monto = montoStr.toDoubleOrNull() ?: 0.0
             val fechaActual = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault()).format(Date())
 
-            // Guardar en la tabla de PAGOS
+
             val db = dbHelper.writableDatabase
             val values = ContentValues().apply {
-                put("dni_socio", dniEncontrado) // <--- AHORA SÍ LO MANDAMOS
+                put("dni_socio", dniEncontrado)
                 put("nombre_socio", nombreSocio)
                 put("actividad", actividad)
                 put("monto", monto)
@@ -102,7 +102,7 @@ class GestionPagosActivity : AppCompatActivity() {
             }
         }
 
-        // Botón volver
+
         btnBack.setOnClickListener { finish() }
     }
 
@@ -132,7 +132,10 @@ class GestionPagosActivity : AppCompatActivity() {
         spinner.adapter = adapter
     }
 
+
+    //Función que genera el PDF
     private fun generarPDF(socio: String, actividad: String, monto: Double) {
+
         val pdfDocument = PdfDocument()
         val paint = Paint()
         val pageInfo = PdfDocument.PageInfo.Builder(300, 450, 1).create()
@@ -141,7 +144,7 @@ class GestionPagosActivity : AppCompatActivity() {
 
         val fecha = SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.getDefault()).format(Date())
 
-        // Cabecera
+
         paint.textSize = 14f
         paint.isFakeBoldText = true
         canvas.drawText("CLUB DEPORTIVO DAM", 70f, 50f, paint)
@@ -151,7 +154,7 @@ class GestionPagosActivity : AppCompatActivity() {
         canvas.drawText("Comprobante de Pago Oficial", 75f, 70f, paint)
         canvas.drawText("------------------------------------------------", 30f, 90f, paint)
 
-        // Cuerpo del ticket
+
         canvas.drawText("Fecha: $fecha", 20f, 130f, paint)
         canvas.drawText("Socio: $socio", 20f, 160f, paint)
         canvas.drawText("Actividad: $actividad", 20f, 190f, paint)
@@ -165,7 +168,7 @@ class GestionPagosActivity : AppCompatActivity() {
 
         pdfDocument.finishPage(page)
 
-        // Ubicación: Android/data/com.example.clubdeportivodam/files
+
         val directory = getExternalFilesDir(null)
         val file = File(directory, "Comprobante_${System.currentTimeMillis()}.pdf")
 

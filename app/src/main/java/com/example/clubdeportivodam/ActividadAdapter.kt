@@ -9,7 +9,7 @@ import androidx.recyclerview.widget.RecyclerView
 class ActividadAdapter(private val listaActividades: List<Actividad>) :
     RecyclerView.Adapter<ActividadAdapter.ActividadViewHolder>() {
 
-    // 1. ViewHolder: Aquí enlazamos los componentes del XML por su ID
+
     class ActividadViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         val tvTitulo: TextView = view.findViewById(R.id.tvTituloActividad)
         val tvProfesor: TextView = view.findViewById(R.id.tvProfesorActividad)
@@ -18,7 +18,7 @@ class ActividadAdapter(private val listaActividades: List<Actividad>) :
         val tvHorario2: TextView = view.findViewById(R.id.tvHorario2Actividad)
     }
 
-    // 2. Inflamos el diseño view_card_activity.xml
+
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ActividadViewHolder {
         val layoutInflater = LayoutInflater.from(parent.context)
         return ActividadViewHolder(
@@ -26,7 +26,7 @@ class ActividadAdapter(private val listaActividades: List<Actividad>) :
         )
     }
 
-    // 3. Reemplazamos los datos hardcodeados por los de la lista
+
     override fun onBindViewHolder(holder: ActividadViewHolder, position: Int) {
         val item = listaActividades[position]
 
@@ -37,6 +37,6 @@ class ActividadAdapter(private val listaActividades: List<Actividad>) :
         holder.tvHorario2.text = item.horario2
     }
 
-    // 4. Cantidad de elementos en la lista
+
     override fun getItemCount(): Int = listaActividades.size
 }

@@ -9,7 +9,7 @@ class AdminSQLiteOpenHelper(
 ) : SQLiteOpenHelper(context, "administracion", null, 3) { // Subimos a versión 3
 
     override fun onCreate(db: SQLiteDatabase) {
-        // 1. Crear tabla SOCIOS
+        // Tabla de Socios
         db.execSQL("""
             CREATE TABLE socios (
                 dni TEXT PRIMARY KEY, 
@@ -23,8 +23,7 @@ class AdminSQLiteOpenHelper(
             )
         """.trimIndent())
 
-        // 2. Crear tabla ACTIVIDADES
-        // Tabla ACTIVIDADES modificada con MONTO
+        // Tabla de Actividades
         db.execSQL("""
             CREATE TABLE actividades (
                 id INTEGER PRIMARY KEY AUTOINCREMENT, 
@@ -37,7 +36,7 @@ class AdminSQLiteOpenHelper(
             )
         """.trimIndent())
 
-        // 3. Crear tabla USUARIOS (La que necesitás para el registro)
+        // Tabla de Usuarios
         db.execSQL("""
             CREATE TABLE usuarios (
                 email TEXT PRIMARY KEY, 
@@ -58,7 +57,7 @@ class AdminSQLiteOpenHelper(
     }
 
     override fun onUpgrade(db: SQLiteDatabase, oldVersion: Int, newVersion: Int) {
-        // Borramos todo en orden inverso si detectamos cambio de versión
+        // Se borra lo anterior al actualizar a una nueva versión mas reciente
         db.execSQL("DROP TABLE IF EXISTS usuarios")
         db.execSQL("DROP TABLE IF EXISTS actividades")
         db.execSQL("DROP TABLE IF EXISTS socios")
