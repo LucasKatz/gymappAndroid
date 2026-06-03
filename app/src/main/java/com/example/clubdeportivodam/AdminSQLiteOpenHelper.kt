@@ -6,7 +6,7 @@ import android.database.sqlite.SQLiteOpenHelper
 
 class AdminSQLiteOpenHelper(
     context: Context?
-) : SQLiteOpenHelper(context, "administracion", null, 3) { // Subimos a versión 3
+) : SQLiteOpenHelper(context, "administracion", null, 3) {
 
     override fun onCreate(db: SQLiteDatabase) {
         // Tabla de Socios

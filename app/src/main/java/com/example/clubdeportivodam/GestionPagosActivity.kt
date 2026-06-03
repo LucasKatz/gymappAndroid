@@ -25,7 +25,6 @@ class GestionPagosActivity : AppCompatActivity() {
 
         dbHelper = AdminSQLiteOpenHelper(this)
 
-
         val etEmail = findViewById<EditText>(R.id.etEmailBusqueda)
         val btnBuscar = findViewById<Button>(R.id.btnBuscarSocio)
         val tvNombre = findViewById<TextView>(R.id.tvNombreResultado)
@@ -34,31 +33,41 @@ class GestionPagosActivity : AppCompatActivity() {
         val btnConfirmar = findViewById<Button>(R.id.btnConfirmarPago)
         val btnBack = findViewById<ImageButton>(R.id.btnBack)
 
-        // Carga de opciones a elegir (actividades) traido de la BBDD
-        cargarActividades(spinner)
+        // Quitamos el cargarActividades de acá para que no muestre nada hasta buscar al usuario
 
-        // Busqueda del socio via Email
+        // Búsqueda del socio vía Email
         btnBuscar.setOnClickListener {
             val email = etEmail.text.toString().trim()
             val db = dbHelper.readableDatabase
 
-            val cursor = db.rawQuery("SELECT nombre, dni FROM socios WHERE email = ?", arrayOf(email))
+            // Buscamos nombre, dni Y CATEGORIA (para saber si es Socio o No Socio)
+            val cursor = db.rawQuery("SELECT nombre, dni, categoria FROM socios WHERE email = ?", arrayOf(email))
 
             if (cursor.moveToFirst()) {
-                tvNombre.text = cursor.getString(0)
+                val nombre = cursor.getString(0)
                 dniEncontrado = cursor.getString(1)
+                val categoria = cursor.getString(2) // Puede ser "Socio" o el nombre de una actividad/No Socio
+
+                tvNombre.text = nombre
+
+                // Aquí llamamos al spinner adaptado según su condición actual
+                configurarOpcionesSpinner(spinner, categoria)
+
             } else {
                 tvNombre.text = "Socio no encontrado"
                 dniEncontrado = ""
+                listaActividades.clear()
+                spinner.adapter = null
+                tvMonto.text = "$ 0.00"
                 Toast.makeText(this, "El email no pertenece a un socio", Toast.LENGTH_SHORT).show()
             }
             cursor.close()
         }
 
-        // Se actualiza el precio segun la actividad seleccionada
+        // Se actualiza el precio según la actividad seleccionada
         spinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
-                if (listaActividades.isNotEmpty()) {
+                if (listaActividades.isNotEmpty() && position < listaActividades.size) {
                     val precio = listaActividades[position].second
                     tvMonto.text = "$ $precio"
                 }
@@ -71,17 +80,16 @@ class GestionPagosActivity : AppCompatActivity() {
         // Se confirma el pago y se registra el mismo en la BBDD. Luego se genera el PDF
         btnConfirmar.setOnClickListener {
             val nombreSocio = tvNombre.text.toString()
-            val actividad = spinner.selectedItem.toString()
+            val actividad = spinner.selectedItem?.toString() ?: ""
             val montoStr = tvMonto.text.toString().replace("$", "").trim()
 
-            if (nombreSocio.isEmpty() || nombreSocio == "Socio no encontrado" || nombreSocio == "Nombre del Socio") {
+            if (nombreSocio.isEmpty() || nombreSocio == "Socio no encontrado" || actividad.isEmpty()) {
                 Toast.makeText(this, "Debe buscar un socio válido primero", Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
 
             val monto = montoStr.toDoubleOrNull() ?: 0.0
             val fechaActual = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault()).format(Date())
-
 
             val db = dbHelper.writableDatabase
             val values = ContentValues().apply {
@@ -102,40 +110,48 @@ class GestionPagosActivity : AppCompatActivity() {
             }
         }
 
-
         btnBack.setOnClickListener { finish() }
     }
 
-    private fun cargarActividades(spinner: Spinner) {
-        val db = dbHelper.readableDatabase
-        val cursor = db.rawQuery("SELECT nombre, monto FROM actividades", null)
+    // NUEVA FUNCIÓN: Filtra las actividades según la categoría del cliente
+    private fun configurarOpcionesSpinner(spinner: Spinner, categoria: String) {
         val nombres = mutableListOf<String>()
         listaActividades.clear()
 
-        if (cursor.moveToFirst()) {
-            do {
-                val nombre = cursor.getString(0)
-                val monto = cursor.getDouble(1)
-                listaActividades.add(Pair(nombre, monto))
-                nombres.add(nombre)
-            } while (cursor.moveToNext())
-        }
-        cursor.close()
+        if (categoria == "Socio") {
+            // REGLA A: Si es SOCIO, solo puede comprar el "Pase Diario"
+            nombres.add("Pase Diario")
+            listaActividades.add(Pair("Pase Diario", 500.00)) // Pon el precio que quieras aquí
+        } else {
+            // REGLA B: Si es NO SOCIO (o cualquier otra categoría), carga todo normal desde la BD
+            val db = dbHelper.readableDatabase
+            val cursor = db.rawQuery("SELECT nombre, monto FROM actividades", null)
 
-        if (nombres.isEmpty()) {
-            nombres.add("No hay actividades")
-            listaActividades.add(Pair("Nada", 0.0))
+            if (cursor.moveToFirst()) {
+                do {
+                    val nombre = cursor.getString(0)
+                    val monto = cursor.getDouble(1)
+                    listaActividades.add(Pair(nombre, monto))
+                    nombres.add(nombre)
+                } while (cursor.moveToNext())
+            }
+            cursor.close()
+
+            // Por si acaso la tabla actividades está vacía
+            if (nombres.isEmpty()) {
+                nombres.add("No hay actividades")
+                listaActividades.add(Pair("Nada", 0.0))
+            }
         }
 
+        // Inflar el spinner con las opciones resultantes del filtro
         val adapter = ArrayAdapter(this, android.R.layout.simple_spinner_item, nombres)
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
         spinner.adapter = adapter
     }
 
-
-    //Función que genera el PDF
+    // Función que genera el PDF (Queda exactamente igual)
     private fun generarPDF(socio: String, actividad: String, monto: Double) {
-
         val pdfDocument = PdfDocument()
         val paint = Paint()
         val pageInfo = PdfDocument.PageInfo.Builder(300, 450, 1).create()
@@ -143,7 +159,6 @@ class GestionPagosActivity : AppCompatActivity() {
         val canvas: Canvas = page.canvas
 
         val fecha = SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.getDefault()).format(Date())
-
 
         paint.textSize = 14f
         paint.isFakeBoldText = true
@@ -153,7 +168,6 @@ class GestionPagosActivity : AppCompatActivity() {
         paint.textSize = 10f
         canvas.drawText("Comprobante de Pago Oficial", 75f, 70f, paint)
         canvas.drawText("------------------------------------------------", 30f, 90f, paint)
-
 
         canvas.drawText("Fecha: $fecha", 20f, 130f, paint)
         canvas.drawText("Socio: $socio", 20f, 160f, paint)
@@ -167,7 +181,6 @@ class GestionPagosActivity : AppCompatActivity() {
         canvas.drawText("Conserve este ticket para ingresar", 65f, 300f, paint)
 
         pdfDocument.finishPage(page)
-
 
         val directory = getExternalFilesDir(null)
         val file = File(directory, "Comprobante_${System.currentTimeMillis()}.pdf")

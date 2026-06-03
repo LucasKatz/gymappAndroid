@@ -17,15 +17,21 @@ class LoginActivity : AppCompatActivity() {
     private lateinit var googleSignInClient: GoogleSignInClient
     private val RC_SIGN_IN = 9001
 
-    // Credenciales del Administrador Único
+    // 1. MODIFICADO: Instanciamos el manejador de seguridad encriptada
+    private lateinit var securityManager: SecurityManager
+
+    // Mantenemos el mail fijo (no es secreto), pero la contraseña vuela de acá
     private val ADMIN_USER = "admin@gym.com"
-    private val ADMIN_PASS = "admin123"
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login)
 
-        // 1. Configurar Google Sign-In
+        // 2. MODIFICADO: Inicializar seguridad y precargar la clave de fábrica de forma encriptada
+        securityManager = SecurityManager(this)
+        securityManager.inicializarClavePorDefecto("admin123")
+
+        // Configurar Google Sign-In
         val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
             .requestIdToken("153442224117-m9cs0f4su0vihkikr2el6f6v2fplekej.apps.googleusercontent.com")
             .requestEmail()
@@ -33,20 +39,20 @@ class LoginActivity : AppCompatActivity() {
 
         googleSignInClient = GoogleSignIn.getClient(this, gso)
 
-        // 2. Configurar el botón de Google
+        // Configurar el botón de Google
         findViewById<View>(R.id.btnGoogle).setOnClickListener {
             val signInIntent = googleSignInClient.signInIntent
             startActivityForResult(signInIntent, RC_SIGN_IN)
         }
 
-        // 3. Botón Ingresar (Manual con validación)
+        // Botón Ingresar (Manual con validación)
         val btnIngresar = findViewById<View>(R.id.btnLogin)
         btnIngresar.setOnClickListener {
-            Log.d("LoginDebug", "Botón presionado") // Si esto no sale en Logcat, el problema es el XML
+            Log.d("LoginDebug", "Botón presionado")
             validarAcceso()
         }
 
-        // 4. Botón Volver
+        // Botón Volver
         findViewById<View>(R.id.btnBack).setOnClickListener {
             finish()
         }
@@ -69,8 +75,9 @@ class LoginActivity : AppCompatActivity() {
             return
         }
 
-        // --- CASO 1: ADMINISTRADOR ---
-        if (emailIngresado == ADMIN_USER && passwordIngresada == ADMIN_PASS) {
+        // --- CASO 1: ADMINISTRADOR (MODIFICADO) ---
+        // Comparamos el mail de siempre, pero la contraseña se delega al validador encriptado
+        if (emailIngresado == ADMIN_USER && securityManager.verificarPassword(passwordIngresada)) {
             Toast.makeText(this, "¡Login Admin Exitoso!", Toast.LENGTH_SHORT).show()
             irAPanel()
             return
@@ -80,7 +87,6 @@ class LoginActivity : AppCompatActivity() {
         val adminDB = AdminSQLiteOpenHelper(this)
         val db = adminDB.readableDatabase
 
-        // 1. Validamos credenciales en la tabla 'usuarios'
         val cursor = db.rawQuery(
             "SELECT email FROM usuarios WHERE email = ? AND password = ?",
             arrayOf(emailIngresado, passwordIngresada)
@@ -89,7 +95,6 @@ class LoginActivity : AppCompatActivity() {
         if (cursor.moveToFirst()) {
             cursor.close()
 
-            // 2. Si las credenciales son correctas, buscamos el DNI en la tabla 'socios'
             val cursorSocio = db.rawQuery(
                 "SELECT dni FROM socios WHERE email = ?",
                 arrayOf(emailIngresado)
@@ -102,10 +107,7 @@ class LoginActivity : AppCompatActivity() {
             cursorSocio.close()
             db.close()
 
-            // --- EL TOAST QUE SOLICITASTE ---
             Toast.makeText(this, "¡Login exitoso! Bienvenido $emailIngresado", Toast.LENGTH_LONG).show()
-
-            // Redirigimos al perfil del socio con su DNI
             irAPerfilSocio(dniSocio)
 
         } else {
@@ -124,19 +126,17 @@ class LoginActivity : AppCompatActivity() {
                 val account = task.getResult(ApiException::class.java)
                 val emailGoogle = account?.email ?: ""
 
-                // 1. Verificamos si es el Administrador
+                // Verificamos si es el Administrador (Por Google)
                 if (emailGoogle == ADMIN_USER) {
                     irAPanel()
                     return
                 }
 
-                // 2. Buscamos en la base de datos local si ese mail existe en la tabla SOCIOS
                 val adminDB = AdminSQLiteOpenHelper(this)
                 val db = adminDB.readableDatabase
                 val c = db.rawQuery("SELECT dni FROM socios WHERE email = ?", arrayOf(emailGoogle))
 
                 if (c.moveToFirst()) {
-                    // SI EXISTE: Extraemos el DNI y entramos
                     val dniSocio = c.getString(0)
                     c.close()
                     db.close()
@@ -144,16 +144,12 @@ class LoginActivity : AppCompatActivity() {
                     Toast.makeText(this, "Bienvenido socio: $emailGoogle", Toast.LENGTH_SHORT).show()
                     irAPerfilSocio(dniSocio)
                 } else {
-                    // NO EXISTE: Aquí aplicamos la restricción total
                     c.close()
                     db.close()
 
-                    // IMPORTANTE: Cerramos la sesión de Google para que no intente entrar automático la próxima vez
                     googleSignInClient.signOut().addOnCompleteListener {
                         Toast.makeText(this, "Acceso denegado: El correo $emailGoogle no es socio del club", Toast.LENGTH_LONG).show()
                     }
-
-                    Log.w("LoginGoogle", "Intento de acceso fallido: $emailGoogle no está en la DB")
                 }
 
             } catch (e: ApiException) {
@@ -170,7 +166,6 @@ class LoginActivity : AppCompatActivity() {
     }
 
     private fun irAPerfilSocio(dni: String) {
-        // Pasamos el DNI a la nueva Activity para mostrar el carnet del socio específico
         val intent = Intent(this, PerfilSocioActivity::class.java)
         intent.putExtra("DNI_SOCIO", dni)
         startActivity(intent)

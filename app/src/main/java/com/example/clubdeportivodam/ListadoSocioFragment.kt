@@ -74,7 +74,7 @@ class ListadoSociosFragment : Fragment() {
             db.close()
 
 
-            rvSocios.adapter = SocioAdapter(lista)
+            rvSocios.adapter = SocioAdapter(lista.toMutableList())
 
         } catch (e: Exception) {
             Log.e("SQL_ERROR", "Error: ${e.message}")

@@ -45,4 +45,6 @@ dependencies {
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
     implementation("com.google.android.gms:play-services-auth:21.2.0")
+    implementation("androidx.security:security-crypto:1.1.0-alpha06")
+
 }

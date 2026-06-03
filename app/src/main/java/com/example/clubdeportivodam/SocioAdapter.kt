@@ -1,15 +1,19 @@
 package com.example.clubdeportivodam
 
+import android.app.AlertDialog
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageButton
 import android.widget.TextView
+import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
 import java.time.Instant
 import java.time.ZoneOffset
 import java.time.format.DateTimeFormatter
 
-class SocioAdapter(private val listaSocios: List<Socio>) :
+
+class SocioAdapter(private val listaSocios: MutableList<Socio>) :
     RecyclerView.Adapter<SocioAdapter.SocioViewHolder>() {
 
     class SocioViewHolder(view: View) : RecyclerView.ViewHolder(view) {
@@ -20,6 +24,8 @@ class SocioAdapter(private val listaSocios: List<Socio>) :
         val txtCategoria: TextView = view.findViewById(R.id.txtCategoriaSocio)
         val txtVencimiento: TextView = view.findViewById(R.id.txtVencimientoSocio)
         val txtEstado: TextView = view.findViewById(R.id.txtEstadoSocio)
+        // 2. AGREGADO: Referencia a tu nuevo botón de eliminar
+        val btnEliminar: ImageButton = view.findViewById(R.id.btnEliminarSocio)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): SocioViewHolder {
@@ -30,6 +36,7 @@ class SocioAdapter(private val listaSocios: List<Socio>) :
 
     override fun onBindViewHolder(holder: SocioViewHolder, position: Int) {
         val socio = listaSocios[position]
+        val context = holder.itemView.context
 
         holder.txtNombre.text = socio.nombre ?: "Sin nombre"
         holder.txtDni.text = "DNI: ${socio.dni}"
@@ -38,19 +45,49 @@ class SocioAdapter(private val listaSocios: List<Socio>) :
         holder.txtTelefono.text = "Tel: ${socio.telefono ?: "-"}"
         holder.txtEstado.text = socio.estado ?: "Activo"
 
-        // --- CORRECCIÓN DE FECHA ---
-        // 1. Usamos Instant para convertir el Long (milisegundos) a LocalDate
+
         try {
             val fecha = Instant.ofEpochMilli(socio.vencimiento)
                 .atZone(ZoneOffset.UTC)
                 .toLocalDate()
 
             val formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy")
-
-            // 2. Usamos la referencia correcta (txtVencimiento), tvFecha no existía en tu ViewHolder
             holder.txtVencimiento.text = "Vence: ${fecha.format(formatter)}"
         } catch (e: Exception) {
             holder.txtVencimiento.text = "Vencimiento: Error"
+        }
+
+
+        holder.btnEliminar.setOnClickListener {
+            AlertDialog.Builder(context)
+                .setTitle("Eliminar Socio")
+                .setMessage("¿Estás seguro de que deseas eliminar a ${socio.nombre}?")
+                .setPositiveButton("Eliminar") { _, _ ->
+
+                    // Conectamos a tu DB existente usando el contexto del ViewHolder
+                    val dbHelper = AdminSQLiteOpenHelper(context)
+                    val db = dbHelper.writableDatabase
+
+                    // Sentencia de borrado mediante el DNI único
+                    val filasAfectadas = db.delete("socios", "dni = ?", arrayOf(socio.dni))
+                    db.close()
+
+                    if (filasAfectadas > 0) {
+                        // Obtenemos la posición actual de forma segura para RecyclerViews
+                        val currentPosition = holder.adapterPosition
+
+                        // Removemos en memoria y refrescamos la vista con la animación nativa
+                        listaSocios.removeAt(currentPosition)
+                        notifyItemRemoved(currentPosition)
+                        notifyItemRangeChanged(currentPosition, listaSocios.size)
+
+                        Toast.makeText(context, "Socio eliminado correctamente", Toast.LENGTH_SHORT).show()
+                    } else {
+                        Toast.makeText(context, "Error al eliminar de la base de datos", Toast.LENGTH_SHORT).show()
+                    }
+                }
+                .setNegativeButton("Cancelar", null)
+                .show()
         }
     }
 
