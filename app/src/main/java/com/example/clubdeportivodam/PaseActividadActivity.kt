@@ -28,7 +28,7 @@ class PaseActividadActivity : AppCompatActivity() {
         val db = admin.readableDatabase
         val lista = mutableListOf<Socio>()
 
-        // Buscamos a los que NO son "Socio" (pueden ser "No Socio", "Pase Diario" o una actividad)
+        // Buscamos a los que NO SOCIOS (se muestra la actividad abonada)
         val cursor = db.rawQuery("SELECT * FROM socios WHERE categoria != 'Socio'", null)
 
         if (cursor.moveToFirst()) {
@@ -42,8 +42,7 @@ class PaseActividadActivity : AppCompatActivity() {
             val iEst = cursor.getColumnIndex("estado")
 
             do {
-                // Lógica: Si el campo categoría está vacío o es "No Socio" a secas,
-                // le ponemos "Pase Diario" por defecto.
+
                 val actividadRegistrada = cursor.getString(iCat)
                 val queMostrar = if (actividadRegistrada == "No Socio" || actividadRegistrada.isNullOrBlank()) {
                     "Pase Diario"

@@ -11,7 +11,7 @@ class PanelGestionActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_panel_gestion)
 
-
+//botónes  de panel de gestión, lleva a cada sección de la app
         val btnSocios = findViewById<MaterialCardView>(R.id.btnTotalSocios)
         btnSocios.setOnClickListener {
             val intent = Intent(this, SociosActivity::class.java)

@@ -17,21 +17,21 @@ class LoginActivity : AppCompatActivity() {
     private lateinit var googleSignInClient: GoogleSignInClient
     private val RC_SIGN_IN = 9001
 
-    // 1. MODIFICADO: Instanciamos el manejador de seguridad encriptada
+    // Se instancia el manejador de encriptado de seguridad
     private lateinit var securityManager: SecurityManager
 
-    // Mantenemos el mail fijo (no es secreto), pero la contraseña vuela de acá
+    // Credencial de admin (solo
     private val ADMIN_USER = "admin@gym.com"
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login)
 
-        // 2. MODIFICADO: Inicializar seguridad y precargar la clave de fábrica de forma encriptada
+        // Encripta la clave por razones de seguridad
         securityManager = SecurityManager(this)
         securityManager.inicializarClavePorDefecto("admin123")
 
-        // Configurar Google Sign-In
+        // Configura Google Sign-In
         val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
             .requestIdToken("153442224117-m9cs0f4su0vihkikr2el6f6v2fplekej.apps.googleusercontent.com")
             .requestEmail()
@@ -39,20 +39,20 @@ class LoginActivity : AppCompatActivity() {
 
         googleSignInClient = GoogleSignIn.getClient(this, gso)
 
-        // Configurar el botón de Google
+        // Configura el botón de "Ingresar con Google"
         findViewById<View>(R.id.btnGoogle).setOnClickListener {
             val signInIntent = googleSignInClient.signInIntent
             startActivityForResult(signInIntent, RC_SIGN_IN)
         }
 
-        // Botón Ingresar (Manual con validación)
+
         val btnIngresar = findViewById<View>(R.id.btnLogin)
         btnIngresar.setOnClickListener {
             Log.d("LoginDebug", "Botón presionado")
             validarAcceso()
         }
 
-        // Botón Volver
+        // Botón para volver atrás
         findViewById<View>(R.id.btnBack).setOnClickListener {
             finish()
         }
@@ -75,15 +75,15 @@ class LoginActivity : AppCompatActivity() {
             return
         }
 
-        // --- CASO 1: ADMINISTRADOR (MODIFICADO) ---
-        // Comparamos el mail de siempre, pero la contraseña se delega al validador encriptado
+
+        // Validación de usuario y pw (solo Admin)
         if (emailIngresado == ADMIN_USER && securityManager.verificarPassword(passwordIngresada)) {
             Toast.makeText(this, "¡Login Admin Exitoso!", Toast.LENGTH_SHORT).show()
             irAPanel()
             return
         }
 
-        // --- CASO 2: USUARIO/SOCIO (Búsqueda en base de datos) ---
+        // Validación de datos de usuarios que NO son admin
         val adminDB = AdminSQLiteOpenHelper(this)
         val db = adminDB.readableDatabase
 

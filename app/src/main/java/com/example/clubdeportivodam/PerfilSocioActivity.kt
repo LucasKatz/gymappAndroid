@@ -64,27 +64,24 @@ class PerfilSocioActivity : AppCompatActivity() {
         btnVolver.setOnClickListener { finish() }
     }
 
-    /**
-     * Convierte una fecha YYYY-MM-DD o un timestamp en milisegundos
-     * a un formato legible como "15 de Junio, 2026"
-     */
+//Convierte el formato de fecha a un formato legible por el admin
     private fun formatearFecha(fechaRaw: String): String {
         return try {
-            // Caso 1: Si guardaste la fecha como texto "2026-06-15" (Formato ISO)
+            // Formateo en caso de fecha en formato texto
             if (fechaRaw.contains("-")) {
                 val parser = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
                 val formatter = SimpleDateFormat("dd 'de' MMMM, yyyy", Locale("es", "ES"))
                 val date = parser.parse(fechaRaw)
                 date?.let { formatter.format(it) } ?: fechaRaw
             }
-            // Caso 2: Si guardaste la fecha como milisegundos (Long)
+            // Fromateo en caso de fecha guardada como milisegundos
             else {
                 val milis = fechaRaw.toLong()
                 val formatter = SimpleDateFormat("dd 'de' MMMM, yyyy", Locale("es", "ES"))
                 formatter.format(java.util.Date(milis))
             }
         } catch (e: Exception) {
-            // Si algo falla, devuelve el dato original para no romper la app
+            // En caso de fallas, se devuelve la fecha en su formato original
             fechaRaw
         }
     }

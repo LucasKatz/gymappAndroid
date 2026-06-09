@@ -5,6 +5,8 @@ import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 
+
+//Activity que carga la pantalla de socio
 class SociosActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -23,13 +25,13 @@ class SociosActivity : AppCompatActivity() {
                     .replace(R.id.fragment_socios_container, ListadoSociosFragment())
                     .commit()
             } catch (e: Exception) {
-                e.printStackTrace() // Esto te dirá en el Logcat qué falló exactamente
+                e.printStackTrace()
             }
         }
 
         val fabNuevoSocio = findViewById<FloatingActionButton>(R.id.fabNuevoSocio)
         fabNuevoSocio.setOnClickListener {
-            // Asegúrate de que esta clase exista, si no la app crashea aquí
+
             val intent = Intent(this, RegistroSocioActivity::class.java)
             startActivity(intent)
         }

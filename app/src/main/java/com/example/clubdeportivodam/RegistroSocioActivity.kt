@@ -5,7 +5,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import android.view.View
 
-
+// Prepara el almacén de datos (ViewModel) y arranca el primer paso del registro de socio
 class RegistroSocioActivity : AppCompatActivity() {
 
     lateinit var socioViewModel: SocioViewModel

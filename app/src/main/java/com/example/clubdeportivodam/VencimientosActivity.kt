@@ -7,34 +7,39 @@ import com.google.android.material.button.MaterialButton
 import java.time.LocalDate
 import java.time.ZoneId
 
+// Pantalla de control de vencimientos
+
 class VencimientosActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_vencimientos)
 
-        // 1. Referencias de la UI
+
         val btnHoy = findViewById<MaterialButton>(R.id.btnHoy)
         val btnVencidos = findViewById<MaterialButton>(R.id.btnVencidos)
         val btnProximos = findViewById<MaterialButton>(R.id.btnProximos)
         val btnVolver = findViewById<ImageButton>(R.id.btnBackToPanel)
 
-        // 2. Actualizar contadores con la nueva lógica de milisegundos
+
         actualizarContadores(btnHoy, btnVencidos, btnProximos)
 
-        // 3. Lógica de los botones
+
         btnVolver.setOnClickListener { finish() }
+
+        //botones de navegación entre pantallas de vencimientos
 
         btnHoy.setOnClickListener { reemplazarFragmento("HOY") }
         btnVencidos.setOnClickListener { reemplazarFragmento("VENCIDOS") }
         btnProximos.setOnClickListener { reemplazarFragmento("PROXIMOS") }
 
-        // 4. Cargar fragmento inicial
+
         if (savedInstanceState == null) {
             reemplazarFragmento("HOY")
         }
     }
 
+    //Función de consulta a la base de datos
     private fun actualizarContadores(bHoy: MaterialButton, bVenc: MaterialButton, bProx: MaterialButton) {
         val admin = AdminSQLiteOpenHelper(this)
         val db = admin.readableDatabase
@@ -51,7 +56,7 @@ class VencimientosActivity : AppCompatActivity() {
             return res
         }
 
-        // --- LAS QUERIES AHORA SON NUMÉRICAS ---
+
 
         // HOY: Entre las 00:00:00 de hoy y las 00:00:00 de mañana
         val numHoy = contar("SELECT COUNT(*) FROM socios WHERE vencimiento >= $hoyInicio AND vencimiento < $hoyFin")
@@ -62,7 +67,7 @@ class VencimientosActivity : AppCompatActivity() {
         // PRÓXIMOS: Mayor o igual al inicio de mañana
         val numProx = contar("SELECT COUNT(*) FROM socios WHERE vencimiento >= $hoyFin AND estado != 'Moroso'")
 
-        // 5. Aplicar textos
+
         bHoy.text = "$numHoy\nHoy"
         bVenc.text = "$numVenc\nVencidos"
         bProx.text = "$numProx\nPróximos"
@@ -70,6 +75,7 @@ class VencimientosActivity : AppCompatActivity() {
         db.close()
     }
 
+    // Recibe el filtro ("HOY", "VENCIDOS", "PROXIMOS") e inyecta dinámicamente el fragmento con la lista filtrada
     private fun reemplazarFragmento(filtro: String) {
         val fragment = ListaVencimientos.newInstance(filtro)
         supportFragmentManager.beginTransaction()

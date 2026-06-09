@@ -2,6 +2,8 @@ package com.example.clubdeportivodam
 
 import androidx.lifecycle.ViewModel
 
+
+//Almacena temporalmente los datos del socio en el momento del registro
 class SocioViewModel : ViewModel() {
     var nombre: String = ""
     var dni: String = ""

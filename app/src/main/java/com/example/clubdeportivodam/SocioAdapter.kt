@@ -24,7 +24,7 @@ class SocioAdapter(private val listaSocios: MutableList<Socio>) :
         val txtCategoria: TextView = view.findViewById(R.id.txtCategoriaSocio)
         val txtVencimiento: TextView = view.findViewById(R.id.txtVencimientoSocio)
         val txtEstado: TextView = view.findViewById(R.id.txtEstadoSocio)
-        // 2. AGREGADO: Referencia a tu nuevo botón de eliminar
+
         val btnEliminar: ImageButton = view.findViewById(R.id.btnEliminarSocio)
     }
 
@@ -64,19 +64,19 @@ class SocioAdapter(private val listaSocios: MutableList<Socio>) :
                 .setMessage("¿Estás seguro de que deseas eliminar a ${socio.nombre}?")
                 .setPositiveButton("Eliminar") { _, _ ->
 
-                    // Conectamos a tu DB existente usando el contexto del ViewHolder
+
                     val dbHelper = AdminSQLiteOpenHelper(context)
                     val db = dbHelper.writableDatabase
 
-                    // Sentencia de borrado mediante el DNI único
+
                     val filasAfectadas = db.delete("socios", "dni = ?", arrayOf(socio.dni))
                     db.close()
 
                     if (filasAfectadas > 0) {
-                        // Obtenemos la posición actual de forma segura para RecyclerViews
+
                         val currentPosition = holder.adapterPosition
 
-                        // Removemos en memoria y refrescamos la vista con la animación nativa
+
                         listaSocios.removeAt(currentPosition)
                         notifyItemRemoved(currentPosition)
                         notifyItemRangeChanged(currentPosition, listaSocios.size)

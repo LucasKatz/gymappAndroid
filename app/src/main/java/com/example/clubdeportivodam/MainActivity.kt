@@ -14,14 +14,14 @@ class MainActivity : AppCompatActivity() {
         enableEdgeToEdge()
         setContentView(R.layout.activity_main)
 
-
+//carga del main layout
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main_layout)) { v, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
         }
 
-
+// botón de ingreso a la app
         val btnIngresar = findViewById<View>(R.id.btnCreateAccount)
 
         btnIngresar.setOnClickListener {
@@ -29,7 +29,7 @@ class MainActivity : AppCompatActivity() {
             val intent = Intent(this, LoginActivity::class.java)
             startActivity(intent)
         }
-
+// botón de registro de nuevo usuario (crear cuenta dentro de la app)
 
         val btnRegistrarse = findViewById<View>(R.id.btnRegistro)
         btnRegistrarse.setOnClickListener {

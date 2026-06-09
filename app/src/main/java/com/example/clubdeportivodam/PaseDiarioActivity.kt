@@ -3,6 +3,8 @@ package com.example.clubdeportivodam
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 
+
+//Carga la activity "Pase Diario"
 class PaseDiarioActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
