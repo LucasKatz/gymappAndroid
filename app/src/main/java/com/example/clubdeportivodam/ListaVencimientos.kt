@@ -49,9 +49,15 @@ class ListaVencimientos : Fragment() {
         val hoyFin = LocalDate.now().plusDays(1).atStartOfDay(zona).toInstant().toEpochMilli()
 
         val query = when (filtro) {
+            // HOY: Mismo rango de tiempo
             "HOY" -> "SELECT * FROM socios WHERE vencimiento >= $hoyInicio AND vencimiento < $hoyFin"
-            "VENCIDOS" -> "SELECT * FROM socios WHERE (vencimiento < $hoyInicio AND estado != 'Al día') OR estado = 'Moroso'"
+
+            // VENCIDOS (CORREGIDO): Quitamos el "AND estado != 'Al día'" para que coincida con la Activity
+            "VENCIDOS" -> "SELECT * FROM socios WHERE vencimiento < $hoyInicio OR estado = 'Moroso'"
+
+            // PROXIMOS: Mismo rango de tiempo
             "PROXIMOS" -> "SELECT * FROM socios WHERE vencimiento >= $hoyFin AND estado != 'Moroso'"
+
             else -> "SELECT * FROM socios"
         }
 
