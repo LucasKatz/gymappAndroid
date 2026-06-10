@@ -12,10 +12,10 @@ import java.time.Instant
 import java.time.ZoneOffset
 import java.time.format.DateTimeFormatter
 
-
+// Adaptador del RecyclerView: se encarga mostrar datos y  gestionar las acciones de socio
 class SocioAdapter(private val listaSocios: MutableList<Socio>) :
     RecyclerView.Adapter<SocioAdapter.SocioViewHolder>() {
-
+// Viewholder con las referencias a los distintos datos del socio
     class SocioViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         val txtNombre: TextView = view.findViewById(R.id.txtNombreSocio)
         val txtDni: TextView = view.findViewById(R.id.txtDniSocio)
@@ -27,13 +27,13 @@ class SocioAdapter(private val listaSocios: MutableList<Socio>) :
 
         val btnEliminar: ImageButton = view.findViewById(R.id.btnEliminarSocio)
     }
-
+    // Crea la estructura visual del renglón
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): SocioViewHolder {
         val adapterLayout = LayoutInflater.from(parent.context)
             .inflate(R.layout.item_socio, parent, false)
         return SocioViewHolder(adapterLayout)
     }
-
+    // Imprime los datos correspondientes a cada renglón
     override fun onBindViewHolder(holder: SocioViewHolder, position: Int) {
         val socio = listaSocios[position]
         val context = holder.itemView.context
@@ -45,7 +45,7 @@ class SocioAdapter(private val listaSocios: MutableList<Socio>) :
         holder.txtTelefono.text = "Tel: ${socio.telefono ?: "-"}"
         holder.txtEstado.text = socio.estado ?: "Activo"
 
-
+// Transforma los milisegundos (Long) a una fecha legible
         try {
             val fecha = Instant.ofEpochMilli(socio.vencimiento)
                 .atZone(ZoneOffset.UTC)
@@ -57,7 +57,7 @@ class SocioAdapter(private val listaSocios: MutableList<Socio>) :
             holder.txtVencimiento.text = "Vencimiento: Error"
         }
 
-
+//Botón para eliminar/dar de baja al socio
         holder.btnEliminar.setOnClickListener {
             AlertDialog.Builder(context)
                 .setTitle("Eliminar Socio")

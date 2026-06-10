@@ -12,6 +12,8 @@ import java.time.LocalDate
 import java.time.ZoneOffset
 import java.time.format.DateTimeFormatter
 
+// Fragmento del Paso 2: Define la categoría del usuario, calcula vencimientos automáticos y procesa el alta final junto al pago
+
 class RegistroSocioFragment2 : Fragment() {
 
     private lateinit var viewModel: SocioViewModel
@@ -22,6 +24,7 @@ class RegistroSocioFragment2 : Fragment() {
     private lateinit var etMonto: EditText
     private lateinit var btnFinalizar: Button
 
+    // Trae los datos correspondientes al Fragment 1
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val view = inflater.inflate(R.layout.fragment_registro_socio_2, container, false)
         viewModel = ViewModelProvider(requireActivity()).get(SocioViewModel::class.java)
@@ -39,6 +42,7 @@ class RegistroSocioFragment2 : Fragment() {
         return view
     }
 
+    // Configura el comportamiento dinámico y las opciones de los menús desplegables
     private fun configurarLogica() {
         val estados = arrayOf("Socio", "No Socio")
         spEstado.setAdapter(ArrayAdapter(requireContext(), R.layout.list_item, estados))
@@ -66,6 +70,7 @@ class RegistroSocioFragment2 : Fragment() {
             spActividades.setOnClickListener { spActividades.showDropDown() }
         }
 
+        // Calcula automáticamente la fecha de vencimiento al seleccionar el tipo de servicio
         spActividades.setOnItemClickListener { _, _, _, _ ->
             val hoy = LocalDate.now()
             val formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy")
@@ -80,7 +85,7 @@ class RegistroSocioFragment2 : Fragment() {
             etVencimiento.setText(vencimiento.format(formatter))
         }
     }
-
+    // Trae las actividades de la BB DD
     private fun obtenerActividadesDeDB(): MutableList<String> {
         val nombres = mutableListOf<String>()
         val admin = AdminSQLiteOpenHelper(requireContext())
@@ -93,6 +98,7 @@ class RegistroSocioFragment2 : Fragment() {
         return nombres
     }
 
+    // Registra al socio y lo guarda con sus respectivos datos en la BB DD
     private fun guardarRegistroFinal() {
         val estadoTxt = spEstado.text.toString()
         val actividadTxt = spActividades.text.toString()
@@ -103,10 +109,10 @@ class RegistroSocioFragment2 : Fragment() {
             return
         }
 
-        // 1. DETERMINAR CATEGORÍA
+
         val categoriaFinal = if (estadoTxt == "Socio") "Socio" else actividadTxt
 
-        // 2. LÓGICA DE FECHA
+
         val hoy = LocalDate.now()
         val formatterDB = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss") // Formato para la tabla pagos
         val fechaActualStr = hoy.atStartOfDay().format(formatterDB)
