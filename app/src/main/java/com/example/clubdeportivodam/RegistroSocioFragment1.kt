@@ -20,10 +20,10 @@ class RegistroSocioFragment1 : Fragment() {
     ): View? {
         val view = inflater.inflate(R.layout.fragment_registro_socio_1, container, false)
 
-        // Conectamos con el ViewModel compartido de la Activity
+        // Conexión al ViewModel compartido de la Activity
         viewModel = ViewModelProvider(requireActivity()).get(SocioViewModel::class.java)
 
-        // 1. Referencias a los componentes
+
         val etNombre = view.findViewById<EditText>(R.id.etNombreRegistro)
         val etDni = view.findViewById<EditText>(R.id.etDniRegistro)
         val etEmail = view.findViewById<EditText>(R.id.etEmailSocio)
@@ -32,7 +32,7 @@ class RegistroSocioFragment1 : Fragment() {
 
         // 2. Configuración del botón Siguiente
         btnSiguiente.setOnClickListener {
-            // Obtenemos textos y limpiamos espacios en blanco
+            // Se "leen" los inputs y se "limpian" espacios en blanco
             val nombre = etNombre.text.toString().trim()
             val dni = etDni.text.toString().replace(".", "").trim()
             val email = etEmail.text.toString().trim()
@@ -40,7 +40,7 @@ class RegistroSocioFragment1 : Fragment() {
 
             var esValido = true
 
-            // --- VALIDACIONES ---
+            // Validaciones de formato
 
             if (nombre.isEmpty()) {
                 etNombre.error = "El nombre es obligatorio"
@@ -68,15 +68,15 @@ class RegistroSocioFragment1 : Fragment() {
                 esValido = false
             }
 
-            // 3. SI TODO ES VÁLIDO, PROCEDEMOS
+            // Condicional de validación antes de avanzar (si hay error en algún dato, no se avanza)
             if (esValido) {
-                // GUARDAMOS EN EL VIEWMODEL
+
                 viewModel.nombre = nombre
                 viewModel.dni = dni
                 viewModel.Email = email
                 viewModel.telefono = tel
 
-                // NAVEGAMOS AL FRAGMENTO 2
+                // Avanzamos hacia la 2da parte del registro (Fragment2)
                 parentFragmentManager.beginTransaction()
                     .replace(R.id.fragment_container_registros, RegistroSocioFragment2())
                     .addToBackStack(null)
