@@ -64,14 +64,7 @@
         android:layout_marginVertical="30dp"/>
 
 
-    <TextView
-        android:id="@+id/tvForgot"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:text="¿Olvidó su contraseña?"
-        android:textColor="#3E4152"
-        android:textStyle="bold" />
+
 
 
 </LinearLayout>

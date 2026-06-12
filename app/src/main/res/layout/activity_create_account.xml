@@ -72,13 +72,6 @@
         android:layout_marginHorizontal="20dp"
         android:layout_marginVertical="30dp"/>
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginVertical="30dp"
-        android:text="¿Ya tienes una cuenta? INGRESA"
-        android:textColor="#9E9E9E"
-        android:textSize="12sp"
-        android:textStyle="bold" />
+
 
 </LinearLayout>

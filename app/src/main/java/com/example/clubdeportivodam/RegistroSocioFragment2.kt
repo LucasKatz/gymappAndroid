@@ -153,7 +153,7 @@ class RegistroSocioFragment2 : Fragment() {
 
                 db.setTransactionSuccessful()
 
-                Toast.makeText(context, "Socio registrado y Pago asentado", Toast.LENGTH_LONG).show()
+                Toast.makeText(context, "Cliente registrado y Pago asentado", Toast.LENGTH_LONG).show()
                 activity?.finish()
             } else {
                 Toast.makeText(context, "Error: DNI ya registrado", Toast.LENGTH_SHORT).show()

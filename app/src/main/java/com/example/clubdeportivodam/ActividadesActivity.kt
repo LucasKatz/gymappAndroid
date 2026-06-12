@@ -24,11 +24,11 @@ class ActividadesActivity : AppCompatActivity() {
         val admin = AdminSQLiteOpenHelper(this)
         val listaDeActividades = obtenerActividades(admin)
 
-        // Configuración de  RecyclerView
+
         val rv = findViewById<RecyclerView>(R.id.rvActividades)
         rv.layoutManager = LinearLayoutManager(this)
 
-        // Conexión del Adapter con la DDBB
+
         rv.adapter = ActividadAdapter(listaDeActividades)
     }
 
@@ -42,12 +42,12 @@ class ActividadesActivity : AppCompatActivity() {
         if (cursor.moveToFirst()) {
             do {
                 val act = Actividad(
-                    cursor.getInt(0),    // id
-                    cursor.getString(1), // nombre
-                    cursor.getString(2), // profesor
-                    cursor.getString(3), // horario1
-                    cursor.getString(4), // horario2
-                    cursor.getInt(5)     // cupos
+                    cursor.getInt(0),
+                    cursor.getString(1),
+                    cursor.getString(2),
+                    cursor.getString(3),
+                    cursor.getString(4),
+                    cursor.getInt(5)
                 )
                 lista.add(act)
             } while (cursor.moveToNext())

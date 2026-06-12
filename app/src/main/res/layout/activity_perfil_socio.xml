@@ -32,6 +32,7 @@
     </RelativeLayout>
 
     <androidx.cardview.widget.CardView
+        android:id="@+id/contenedorCarnet"
         android:layout_width="match_parent"
         android:layout_height="240dp"
         app:cardCornerRadius="20dp"
@@ -127,12 +128,12 @@
     </androidx.cardview.widget.CardView>
 
     <Button
-        android:id="@+id/btnPrint"
+        android:id="@+id/btnDescargarPdf"
         android:layout_width="match_parent"
         android:layout_height="56dp"
         android:layout_marginTop="40dp"
         android:backgroundTint="#1B4F72"
-        android:text="Imprimir Carnet"
+        android:text="Descargar Carnet (PDF)"
         android:textColor="#FFFFFF"
         android:textSize="16sp"
         app:cornerRadius="28dp" />

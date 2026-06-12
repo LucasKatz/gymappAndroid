@@ -20,6 +20,11 @@ class CreateAccountActivity : AppCompatActivity() {
         val checkPoliticas = findViewById<CheckBox>(R.id.checkPoliticas)
         val btnRegistrar = findViewById<android.view.View>(R.id.btnLogin)
 
+        val btnVolver = findViewById<android.view.View>(R.id.btnBack)
+        btnVolver.setOnClickListener {
+            finish()
+        }
+
         btnRegistrar.setOnClickListener {
             val email1 = etEmail1.text.toString().trim()
             val email2 = etEmail2.text.toString().trim()
@@ -35,7 +40,7 @@ class CreateAccountActivity : AppCompatActivity() {
                 Toast.makeText(this, "Debe aceptar los términos y condiciones", Toast.LENGTH_SHORT).show()
             }
             else {
-                // LLAMADA A LA NUEVA FUNCIÓN DE VALIDACIÓN
+
                 validarYRegistrar(email1, pass)
             }
         }
