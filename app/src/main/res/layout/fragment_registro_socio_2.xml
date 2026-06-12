@@ -74,7 +74,8 @@
         <EditText
             android:id="@+id/etMonto"
             style="@style/InputStyle"
-            android:inputType="numberDecimal" />
+            android:inputType="numberDecimal"
+            android:clickable="false"/>
 
         <Button
             android:id="@+id/btnConfirmarInscripcion"

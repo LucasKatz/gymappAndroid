@@ -13,7 +13,6 @@ import java.time.ZoneOffset
 import java.time.format.DateTimeFormatter
 
 // Fragmento del Paso 2: Define la categoría del usuario, calcula vencimientos automáticos y procesa el alta final junto al pago
-
 class RegistroSocioFragment2 : Fragment() {
 
     private lateinit var viewModel: SocioViewModel
@@ -24,7 +23,6 @@ class RegistroSocioFragment2 : Fragment() {
     private lateinit var etMonto: EditText
     private lateinit var btnFinalizar: Button
 
-    // Trae los datos correspondientes al Fragment 1
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val view = inflater.inflate(R.layout.fragment_registro_socio_2, container, false)
         viewModel = ViewModelProvider(requireActivity()).get(SocioViewModel::class.java)
@@ -42,7 +40,6 @@ class RegistroSocioFragment2 : Fragment() {
         return view
     }
 
-    // Configura el comportamiento dinámico y las opciones de los menús desplegables
     private fun configurarLogica() {
         val estados = arrayOf("Socio", "No Socio")
         spEstado.setAdapter(ArrayAdapter(requireContext(), R.layout.list_item, estados))
@@ -56,6 +53,7 @@ class RegistroSocioFragment2 : Fragment() {
             val seleccion = estados[position]
             spActividades.setText("")
             etVencimiento.setText("")
+            etMonto.setText("") // Limpiamos el monto al cambiar de estado
 
             val listaAct = if (seleccion == "Socio") {
                 mutableListOf("Cuota")
@@ -70,22 +68,35 @@ class RegistroSocioFragment2 : Fragment() {
             spActividades.setOnClickListener { spActividades.showDropDown() }
         }
 
-        // Calcula automáticamente la fecha de vencimiento al seleccionar el tipo de servicio
+        // MODIFICADO: Ahora calcula automáticamente la fecha de vencimiento Y el monto
         spActividades.setOnItemClickListener { _, _, _, _ ->
             val hoy = LocalDate.now()
             val formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy")
             val actividadSeleccionada = spActividades.text.toString()
 
-            // Si es Cuota vence en 1 mes, si es actividad o pase diario vence mañana
+            // 1. Lógica de Vencimiento
             val vencimiento = if (actividadSeleccionada == "Cuota") {
                 hoy.plusMonths(1)
             } else {
                 hoy.plusDays(1)
             }
             etVencimiento.setText(vencimiento.format(formatter))
+
+            // 2. NUEVA LÓGICA: Asignación automática de montos
+            if (actividadSeleccionada == "Cuota") {
+                // Si es Socio, se le asigna el valor fijo requerido
+                etMonto.setText("25000.0")
+            } else if (actividadSeleccionada == "Pase Diario") {
+                // Valor estimado para el pase diario (puedes ajustarlo si lo deseas)
+                etMonto.setText("2500.0")
+            } else {
+                // Si es una disciplina (Yoga, Boxeo, etc.), la buscamos en la BBDD
+                val montoDb = obtenerMontoActividadDeDB(actividadSeleccionada)
+                etMonto.setText(montoDb.toString())
+            }
         }
     }
-    // Trae las actividades de la BB DD
+
     private fun obtenerActividadesDeDB(): MutableList<String> {
         val nombres = mutableListOf<String>()
         val admin = AdminSQLiteOpenHelper(requireContext())
@@ -98,7 +109,22 @@ class RegistroSocioFragment2 : Fragment() {
         return nombres
     }
 
-    // Registra al socio y lo guarda con sus respectivos datos en la BB DD
+    // AGREGADO: Nueva función auxiliar para consultar el precio específico de una actividad
+    private fun obtenerMontoActividadDeDB(nombreActividad: String): Double {
+        var monto = 0.0
+        val admin = AdminSQLiteOpenHelper(requireContext())
+        val db = admin.readableDatabase
+
+        // Buscamos el monto filtrando por el nombre exacto de la actividad
+        val cursor = db.rawQuery("SELECT monto FROM actividades WHERE nombre = ?", arrayOf(nombreActividad))
+        if (cursor.moveToFirst()) {
+            monto = cursor.getDouble(0)
+        }
+        cursor.close()
+        db.close()
+        return monto
+    }
+
     private fun guardarRegistroFinal() {
         val estadoTxt = spEstado.text.toString()
         val actividadTxt = spActividades.text.toString()
@@ -109,12 +135,10 @@ class RegistroSocioFragment2 : Fragment() {
             return
         }
 
-
         val categoriaFinal = if (estadoTxt == "Socio") "Socio" else actividadTxt
 
-
         val hoy = LocalDate.now()
-        val formatterDB = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss") // Formato para la tabla pagos
+        val formatterDB = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
         val fechaActualStr = hoy.atStartOfDay().format(formatterDB)
 
         val fechaVenc = if (actividadTxt == "Cuota") hoy.plusMonths(1) else hoy.plusDays(1)
@@ -125,7 +149,6 @@ class RegistroSocioFragment2 : Fragment() {
 
         db.beginTransaction()
         try {
-
             val registroSocio = ContentValues().apply {
                 put("dni", viewModel.dni)
                 put("nombre", viewModel.nombre)
@@ -140,17 +163,15 @@ class RegistroSocioFragment2 : Fragment() {
             val resSocio = db.insert("socios", null, registroSocio)
 
             if (resSocio != -1L) {
-
                 val registroPago = ContentValues().apply {
                     put("dni_socio", viewModel.dni)
                     put("nombre_socio", viewModel.nombre)
-                    put("actividad", actividadTxt) // Ej: "Cuota", "Yoga" o "Pase Diario"
+                    put("actividad", actividadTxt)
                     put("monto", montoTxt.toDouble())
                     put("fecha", fechaActualStr)
                 }
 
                 db.insert("pagos", null, registroPago)
-
                 db.setTransactionSuccessful()
 
                 Toast.makeText(context, "Cliente registrado y Pago asentado", Toast.LENGTH_LONG).show()
