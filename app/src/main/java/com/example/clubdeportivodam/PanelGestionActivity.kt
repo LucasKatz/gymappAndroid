@@ -4,6 +4,7 @@ import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import com.google.android.material.card.MaterialCardView
+import com.google.android.material.floatingactionbutton.FloatingActionButton
 
 class PanelGestionActivity : AppCompatActivity() {
 
@@ -11,13 +12,12 @@ class PanelGestionActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_panel_gestion)
 
-//botónes  de panel de gestión, lleva a cada sección de la app
+        // Botones de panel de gestión, lleva a cada sección de la app
         val btnSocios = findViewById<MaterialCardView>(R.id.btnTotalSocios)
         btnSocios.setOnClickListener {
             val intent = Intent(this, SociosActivity::class.java)
             startActivity(intent)
         }
-
 
         val btnVencimientos = findViewById<MaterialCardView>(R.id.btnCuotasVencidas)
         btnVencimientos.setOnClickListener {
@@ -25,13 +25,11 @@ class PanelGestionActivity : AppCompatActivity() {
             startActivity(intent)
         }
 
-
         val btnActividades = findViewById<MaterialCardView>(R.id.btnActividades)
         btnActividades.setOnClickListener {
             val intent = Intent(this, ActividadesActivity::class.java)
             startActivity(intent)
         }
-
 
         val btnPaseActividad = findViewById<MaterialCardView>(R.id.btnPaseActividad)
         btnPaseActividad.setOnClickListener {
@@ -46,7 +44,14 @@ class PanelGestionActivity : AppCompatActivity() {
         }
 
         findViewById<MaterialCardView>(R.id.btnVerPagos).setOnClickListener {
-            val intent = android.content.Intent(this, ListadoPagosActivity::class.java)
+            val intent = Intent(this, ListadoPagosActivity::class.java)
+            startActivity(intent)
+        }
+
+
+        val fabNuevoSocio = findViewById<FloatingActionButton>(R.id.fabNuevoSocio)
+        fabNuevoSocio.setOnClickListener {
+            val intent = Intent(this, RegistroSocioActivity::class.java)
             startActivity(intent)
         }
     }

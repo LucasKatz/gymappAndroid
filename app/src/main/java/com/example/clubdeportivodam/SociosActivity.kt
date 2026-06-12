@@ -29,11 +29,6 @@ class SociosActivity : AppCompatActivity() {
             }
         }
 
-        val fabNuevoSocio = findViewById<FloatingActionButton>(R.id.fabNuevoSocio)
-        fabNuevoSocio.setOnClickListener {
 
-            val intent = Intent(this, RegistroSocioActivity::class.java)
-            startActivity(intent)
-        }
     }
 }
